@@ -1,0 +1,113 @@
+:root {
+    --primary-font: 'Inter', Tahoma, Verdana, Geneva, sans-serif;
+    --code-font: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+
+    --regular-font-weight: 400;
+    --medium-font-weight: 500;
+    --semibold-font-weight: 600;
+    --bold-font-weight: 700;
+
+    //
+
+    --background-color: #fff;
+    --background-rgb-color: 255,255,255;
+
+    --text-color: #000;
+    --secondary-text-color: #888;
+
+    --link-color: #D4FF5C;
+
+    --accent-color: #D4FF5C;
+    --accent-rgb-color: 212,255,92;
+
+    --border-color: rgba(0,0,0,.1);
+}
+
+body {
+    background: var(--background-color);
+    transition: background-color 1s;
+}
+
+body,
+button,
+input,
+textarea,
+select,
+optgroup {
+    // 1.21 - default Figma line-height for Inter font. We use 1.2 to make it more even
+    font: var(--regular-font-weight) 14px/1.2 var(--primary-font);
+    color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+    appearance: none;
+    padding: 0;
+    background: none;
+    border: 0;
+}
+
+:focus {
+    outline: none;
+}
+
+::placeholder {
+    color: var(--secondary-text-color);
+}
+
+textarea {
+    resize: none;
+}
+
+label,
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+    cursor: pointer;
+}
+
+*[disabled] {
+    cursor: default;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    cursor: pointer; // cursor is 'text' for anchors with no [href]
+}
+
+b,
+strong {
+    font-weight: bolder;
+}
+
+code {
+    font-family: var(--code-font);
+}
+
+svg {
+    display: block;
+}
+
+hr {
+    width: 100%;
+    border: solid var(--border-color);
+    border-width: 0 0 1px;
+}
+
+iframe {
+    display: block;
+}
+
+//
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
