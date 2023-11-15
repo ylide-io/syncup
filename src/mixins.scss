@@ -1,0 +1,67 @@
+// RESPONSIVE
+
+@mixin lessThan($width: null, $height: null) {
+    @if $width and $height {
+        @media (max-width: $width), (max-height: $height) {
+            @content;
+        }
+    } @else if $width {
+        @media (max-width: $width) {
+            @content;
+        }
+    } @else if $height {
+        @media (max-height: $height) {
+            @content;
+        }
+    } @else {
+        @error "No WIDTH or HEIGHT";
+    }
+}
+
+@mixin lessThatWidth($width) {
+    @include lessThan($width) {
+        @content
+    }
+}
+
+@mixin lessThatHeight($height) {
+    @include lessThan(null, $height) {
+        @content
+    }
+}
+
+// UTILS
+
+@mixin expand-click-area($size: 4px, $pseudo: before) {
+    position: relative;
+
+    &:#{$pseudo} {
+        content: '';
+        position: absolute;
+        top: -#{$size};
+        right: -#{$size};
+        bottom: -#{$size};
+        left: -#{$size};
+    }
+}
+
+@mixin truncate-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin article-text {
+    line-height: 1.5;
+    word-break: break-word;
+
+    a:hover,
+    a:focus-visible {
+        text-decoration: underline;
+    }
+}
+
+@mixin no-text-selection {
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
+}
