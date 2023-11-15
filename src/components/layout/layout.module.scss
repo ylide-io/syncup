@@ -44,6 +44,7 @@
 .footerTags {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, 16.667%);
+	justify-items: start;
 	grid-gap: 20px;
 }
 

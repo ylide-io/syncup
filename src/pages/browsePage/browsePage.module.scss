@@ -1,3 +1,43 @@
 .root {
-    visibility: visible;
+	display: grid;
+	grid-template-columns: 240px 1fr;
+	grid-gap: 40px;
+	align-items: start;
+}
+
+//
+
+.sidebar {
+	display: grid;
+	justify-items: start;
+	grid-gap: 12px;
+}
+
+.tagList {
+	display: grid;
+	justify-items: start;
+	grid-gap: 8px;
+}
+
+.sidebarMoreButton {
+	@include expand-click-area;
+	font-size: 14px;
+}
+
+//
+
+.content {
+	display: grid;
+	grid-gap: 80px;
+}
+
+.list {
+	display: grid;
+	grid-gap: 64px;
+}
+
+.moreButton {
+	@include expand-click-area;
+	margin: auto;
+	font-size: 18px;
 }

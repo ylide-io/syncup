@@ -1,0 +1,38 @@
+.root {
+	display: grid;
+	grid-template-columns: 320px 1fr;
+	grid-gap: 40px;
+	height: 320px;
+}
+
+.photo {
+	padding: 0 0 100%;
+	background: #222;
+	border-radius: 20px;
+}
+
+.details {
+	display: flex;
+	flex-direction: column;
+	grid-gap: 16px;
+}
+
+.name {
+	font-size: 36px;
+	font-weight: var(--semi-bold-font-weight);
+}
+
+.bio {
+	@include article-text;
+	flex: 1 1 0;
+	min-height: 0;
+	font-size: 18px;
+	overflow: hidden;
+}
+
+.footer {
+	display: grid;
+	grid-auto-flow: column;
+	align-items: center;
+	justify-content: space-between;
+}

@@ -14,7 +14,7 @@ export function Layout({ children }: LayoutProps) {
 				<div className={css.headerRight}>
 					<a href="/">Browse Auctions</a>
 					<a href="/">Dashboard</a>
-					<Button>Sign Up</Button>
+					<Button>SIGN UP</Button>
 				</div>
 			</div>
 

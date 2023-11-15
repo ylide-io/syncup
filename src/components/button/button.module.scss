@@ -34,10 +34,6 @@
 	}
 }
 
-.content {
-	text-transform: uppercase;
-}
-
 .root_singleline .content {
 	@include truncate-text;
 }
