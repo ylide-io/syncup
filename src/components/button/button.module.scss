@@ -1,0 +1,169 @@
+.root {
+	@include expand-click-area(2px);
+	@include no-text-selection;
+	display: inline-grid;
+	grid-auto-flow: column;
+	grid-gap: 4px;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	border: 2px solid;
+	border-radius: 22px;
+
+	> i {
+		min-width: 20px;
+		text-align: center;
+	}
+}
+
+.root_disabled {
+	pointer-events: none;
+	opacity: 0.5;
+}
+
+.icon {
+	position: relative;
+	width: 20px;
+	height: 20px;
+
+	> * {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
+.content {
+	text-transform: uppercase;
+}
+
+.root_singleline .content {
+	@include truncate-text;
+}
+
+.root_loading .icon,
+.root_loading .content {
+	visibility: hidden;
+}
+
+.loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+// SIZE
+
+.root_smallSize {
+	$size: $control-size_s;
+
+	padding-top: 3px;
+	padding-bottom: 3px;
+	min-width: $size;
+	min-height: $size;
+
+	&.root_hasContent {
+		padding-right: 16px;
+		padding-left: 16px;
+	}
+
+	&.root_hasIcon {
+		padding-left: 5px;
+	}
+
+	&.root_hasIcon:not(.root_hasContent) {
+		padding-right: 3px;
+		padding-left: 3px;
+	}
+
+	.content {
+		font-size: 14px;
+	}
+}
+
+.root_mediumSize {
+	$size: $control-size_m;
+
+	padding-top: 3px;
+	padding-bottom: 3px;
+	min-width: $size;
+	min-height: $size;
+
+	&.root_hasContent {
+		padding-right: 22px;
+		padding-left: 22px;
+	}
+
+	&.root_hasIcon {
+		padding-left: 7px;
+	}
+
+	&.root_hasIcon:not(.root_hasContent) {
+		padding-right: 5px;
+		padding-left: 5px;
+	}
+
+	.content {
+		font-size: 14px;
+	}
+}
+
+.root_largeSize {
+	$size: $control-size_l;
+
+	padding-top: 3px;
+	padding-bottom: 3px;
+	min-width: $size;
+	min-height: $size;
+
+	&.root_hasContent {
+		padding-right: 22px;
+		padding-left: 22px;
+	}
+
+	&.root_hasIcon {
+		padding-left: 7px;
+	}
+
+	&.root_hasIcon:not(.root_hasContent) {
+		padding-right: 5px;
+		padding-left: 5px;
+	}
+
+	.icon {
+		width: 24px;
+		height: 24px;
+	}
+
+	.content {
+		font-size: 16px;
+	}
+}
+
+// STYLE
+
+.root_primaryLook {
+	color: var(--on-accent-color);
+	font-weight: var(--semi-bold-font-weight);
+	background: var(--accent-color);
+	border-color: var(--accent-color);
+
+	&:hover,
+	&:focus-visible {
+		background: var(--accent-hover-color);
+		border-color: var(--accent-hover-color);
+	}
+}
+
+.root_secondaryLook {
+	color: var(--accent-color);
+	font-weight: var(--medium-font-weight);
+	border-color: var(--accent-color);
+
+	&:hover,
+	&:focus-visible {
+		background: rgba(var(--accent-rgb-color), 0.25);
+	}
+}

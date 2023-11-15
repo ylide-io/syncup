@@ -1,3 +1,7 @@
+$control-size_s: 32px;
+$control-size_m: 44px;
+$control-size_l: 52px;
+
 // RESPONSIVE
 
 @mixin lessThan($width: null, $height: null) {

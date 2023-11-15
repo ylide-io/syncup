@@ -19,10 +19,9 @@ module.exports = {
   },
   plugins: ['react-refresh'],
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
-    '@typescript-eslint/no-redundant-type-constituents':'off'
+    '@typescript-eslint/no-redundant-type-constituents':'off',
+    '@typescript-eslint/prefer-nullish-coalescing':'off',
+    'react-refresh/only-export-components':'off',
+    'react/display-name':'off'
   },
 }

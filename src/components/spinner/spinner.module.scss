@@ -1,0 +1,32 @@
+.root {
+	width: 20px;
+}
+
+.root_primaryLook {
+	color: var(--text-color);
+}
+
+.root_secondaryLook {
+	color: var(--secondary-text-color);
+}
+
+.inner {
+	position: relative;
+	padding: 0 0 100%;
+}
+
+.svg {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	fill: currentColor;
+	animation: loader 1s infinite linear;
+}
+
+@keyframes loader {
+	to {
+		transform: rotate(1turn);
+	}
+}

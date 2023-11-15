@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { App } from './app/app.tsx'
+import { App } from './app.tsx'
 import 'normalize.css'
 import 'minireset.css'
 import './index.scss'
