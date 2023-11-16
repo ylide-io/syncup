@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { App } from './app.tsx'
 import 'normalize.css'
 import 'minireset.css'
-import './index.scss'
+import './main.scss'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { invariant } from './utils/assert.ts'
 
