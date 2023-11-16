@@ -1,5 +1,5 @@
 .root {
-	@include expand-click-area(2px);
+	@include expand-click-area(6px);
 	@include no-text-selection;
 	display: inline-grid;
 	grid-auto-flow: column;
