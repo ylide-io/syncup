@@ -2,6 +2,8 @@ import css from './layout.module.scss'
 import { PropsWithChildren } from 'react'
 import LogoSvg from './logo.svg'
 import { Button } from '../button/button.tsx'
+import { Link } from 'react-router-dom'
+import { RoutePath } from '../../routePath.ts'
 
 type LayoutProps = PropsWithChildren
 
@@ -12,9 +14,9 @@ export function Layout({ children }: LayoutProps) {
 				<LogoSvg />
 
 				<div className={css.headerRight}>
-					<a href="/">Browse Auctions</a>
-					<a href="/">Dashboard</a>
-					<Button>SIGN UP</Button>
+					<Link to={RoutePath.ROOT}>Browse Auctions</Link>
+					<Link to={RoutePath.DASHBOARD}>Dashboard</Link>
+					<Button>Sign Up</Button>
 				</div>
 			</div>
 

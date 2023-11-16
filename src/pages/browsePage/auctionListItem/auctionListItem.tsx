@@ -1,7 +1,8 @@
-import css from './auction.module.scss'
+import css from './auctionListItem.module.scss'
 import { Button } from '../../../components/button/button.tsx'
+import { NBSP } from '../../../global.ts'
 
-export function Auction() {
+export function AuctionListItem() {
 	return (
 		<div className={css.root}>
 			<div className={css.photo} />
@@ -9,7 +10,11 @@ export function Auction() {
 			<div className={css.details}>
 				<div className={css.name}>Bryan Wilcox</div>
 
-				<div>Co-Founder & CTO · Philz Coffee</div>
+				<div>
+					Co-Founder & CTO{NBSP}
+					{NBSP}·{NBSP}
+					{NBSP}Philz Coffee
+				</div>
 
 				<div className={css.bio}>
 					Bryan Wilcox is a co-founder and the former CTO of Tovala, a food-tech company that saves people
@@ -22,7 +27,7 @@ export function Auction() {
 				</div>
 
 				<div className={css.footer}>
-					<Button>DETAILS ►</Button>
+					<Button>Details ►</Button>
 
 					<div>
 						Auction ending in <b>5 days 20 hours</b>

@@ -1,0 +1,21 @@
+.root {
+	display: grid;
+	grid-gap: 40px;
+}
+
+.title {
+	font-size: 32px;
+	font-weight: var(--bold-font-weight);
+}
+
+.content {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	align-items: start;
+	grid-gap: 40px;
+}
+
+.section {
+	display: grid;
+	grid-gap: 40px;
+}

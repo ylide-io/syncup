@@ -2,7 +2,7 @@ import css from './browsePage.module.scss'
 import { Layout } from '../../components/layout/layout.tsx'
 import { SectionHeader } from '../../components/components.tsx'
 import { Button, ButtonLook, ButtonSize } from '../../components/button/button.tsx'
-import { Auction } from './auction/auction.tsx'
+import { AuctionListItem } from './auctionListItem/auctionListItem.tsx'
 
 export function BrowsePage() {
 	return (
@@ -34,9 +34,9 @@ export function BrowsePage() {
 
 				<div className={css.content}>
 					<div className={css.list}>
-						<Auction />
-						<Auction />
-						<Auction />
+						<AuctionListItem />
+						<AuctionListItem />
+						<AuctionListItem />
 					</div>
 
 					<a className={css.moreButton} href="/">

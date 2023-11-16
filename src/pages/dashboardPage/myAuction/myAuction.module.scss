@@ -1,0 +1,38 @@
+.root {
+	display: grid;
+	grid-template-columns: 120px 1fr;
+	align-items: start;
+	grid-gap: 20px;
+}
+
+.photo {
+	padding: 0 0 100%;
+	background: #222;
+	border-radius: 20px;
+}
+
+.details {
+	display: grid;
+	align-items: start;
+	grid-gap: 12px;
+	padding: 6px 0 0;
+}
+
+.name {
+	font-size: 24px;
+	font-weight: var(--semi-bold-font-weight);
+}
+
+.info {
+	padding: 16px;
+	font-size: 14px;
+	border: 2px solid var(--accent-color);
+	border-radius: 20px;
+}
+
+.footer {
+	display: grid;
+	grid-auto-flow: column;
+	align-items: center;
+	justify-content: space-between;
+}
