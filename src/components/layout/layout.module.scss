@@ -22,6 +22,10 @@
 	align-items: center;
 	grid-gap: 40px;
 	margin: 0 0 0 auto;
+
+	> a {
+		@include expand-click-area;
+	}
 }
 
 //
@@ -46,6 +50,10 @@
 	grid-template-columns: repeat(auto-fill, 16.667%);
 	justify-items: start;
 	grid-gap: 20px;
+
+	> a {
+		@include expand-click-area;
+	}
 }
 
 .footerBottom {
@@ -57,4 +65,8 @@
 	grid-auto-flow: column;
 	grid-gap: 20px;
 	margin: 0 0 0 auto;
+
+	> a {
+		@include expand-click-area;
+	}
 }
