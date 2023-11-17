@@ -1,9 +1,11 @@
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 
 import { RoutePath } from '../../routePath.ts'
-import { Button } from '../button/button.tsx'
+import { truncateAddress } from '../../utils/string.ts'
+import { Button, ButtonLook } from '../button/button.tsx'
 import css from './layout.module.scss'
 import LogoSvg from './logo.svg'
 
@@ -11,6 +13,7 @@ type LayoutProps = PropsWithChildren
 
 export function Layout({ children }: LayoutProps) {
 	const { open } = useWeb3Modal()
+	const { address } = useAccount()
 
 	return (
 		<div className={css.root}>
@@ -22,7 +25,14 @@ export function Layout({ children }: LayoutProps) {
 				<div className={css.headerRight}>
 					<Link to={RoutePath.ROOT}>Browse Auctions</Link>
 					<Link to={RoutePath.DASHBOARD}>Dashboard</Link>
-					<Button onClick={() => void open()}>Sign Up</Button>
+
+					{address ? (
+						<Button look={ButtonLook.SECONDARY} onClick={() => void open({ view: 'Account' })}>
+							{truncateAddress(address)}
+						</Button>
+					) : (
+						<Button onClick={() => void open({ view: 'Connect' })}>Sign Up</Button>
+					)}
 				</div>
 			</div>
 
