@@ -1,3 +1,4 @@
+import { useWeb3ModalTheme } from '@web3modal/wagmi/react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { WagmiConfig } from 'wagmi'
 
@@ -10,6 +11,12 @@ import { setupWeb3Modal } from './utils/walletconnect.tsx'
 const wagmiConfig = setupWeb3Modal()
 
 export function App() {
+	const { setThemeVariables } = useWeb3ModalTheme()
+
+	setThemeVariables({
+		'--w3m-accent': '#f8cb53',
+	})
+
 	return (
 		// @ts-expect-error config
 		<WagmiConfig config={wagmiConfig}>
