@@ -1,8 +1,8 @@
-import css from './auctionListItem.module.scss'
 import { Button } from '../../../components/button/button.tsx'
+import { ProfilePhoto } from '../../../components/profilePhoto/profilePhoto.tsx'
 import { NBSP } from '../../../global.ts'
 import { RoutePath } from '../../../routePath.ts'
-import { ProfilePhoto } from '../../../components/profilePhoto/profilePhoto.tsx'
+import css from './auctionListItem.module.scss'
 
 export function AuctionListItem() {
 	return (

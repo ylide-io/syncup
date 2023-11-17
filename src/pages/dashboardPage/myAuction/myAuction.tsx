@@ -1,7 +1,7 @@
-import css from './myAuction.module.scss'
 import { Button, ButtonSize } from '../../../components/button/button.tsx'
-import { NBSP } from '../../../global.ts'
 import { ProfilePhoto } from '../../../components/profilePhoto/profilePhoto.tsx'
+import { NBSP } from '../../../global.ts'
+import css from './myAuction.module.scss'
 
 export function MyAuction() {
 	return (

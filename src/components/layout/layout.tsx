@@ -1,13 +1,17 @@
-import css from './layout.module.scss'
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { PropsWithChildren } from 'react'
-import LogoSvg from './logo.svg'
-import { Button } from '../button/button.tsx'
 import { Link } from 'react-router-dom'
+
 import { RoutePath } from '../../routePath.ts'
+import { Button } from '../button/button.tsx'
+import css from './layout.module.scss'
+import LogoSvg from './logo.svg'
 
 type LayoutProps = PropsWithChildren
 
 export function Layout({ children }: LayoutProps) {
+	const { open } = useWeb3Modal()
+
 	return (
 		<div className={css.root}>
 			<div className={css.header}>
@@ -18,7 +22,7 @@ export function Layout({ children }: LayoutProps) {
 				<div className={css.headerRight}>
 					<Link to={RoutePath.ROOT}>Browse Auctions</Link>
 					<Link to={RoutePath.DASHBOARD}>Dashboard</Link>
-					<Button>Sign Up</Button>
+					<Button onClick={() => void open()}>Sign Up</Button>
 				</div>
 			</div>
 
