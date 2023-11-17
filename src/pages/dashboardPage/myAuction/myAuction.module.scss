@@ -3,6 +3,20 @@
 	grid-template-columns: 120px 1fr;
 	align-items: start;
 	grid-gap: 20px;
+
+	@include less1280w {
+		grid-template-columns: 80px 1fr;
+	}
+
+	@include lessThatWidth(600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.profilePhoto {
+	@include lessThatWidth(600px) {
+		max-width: 240px;
+	}
 }
 
 .details {

@@ -13,6 +13,10 @@
 	grid-template-columns: repeat(2, 1fr);
 	align-items: start;
 	grid-gap: 40px;
+
+	@include less1024w {
+		grid-template-columns: 1fr;
+	}
 }
 
 .section {

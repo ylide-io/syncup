@@ -6,14 +6,31 @@
 	width: 100%;
 	max-width: 1280px;
 	min-height: 100vh;
+
+	@include less1024w {
+		padding: 0 32px;
+	}
+
+	@include less480w {
+		padding: 0 20px;
+	}
 }
 
 //
 
 .header {
-	display: flex;
+	display: grid;
+	grid-auto-flow: column;
+	justify-content: space-between;
 	align-items: center;
 	height: 100px;
+
+	@include less768w {
+		grid-auto-flow: row;
+		grid-gap: 20px;
+		padding: 20px 0;
+		height: auto;
+	}
 }
 
 .logo {
@@ -29,7 +46,11 @@
 	grid-auto-flow: column;
 	align-items: center;
 	grid-gap: 40px;
-	margin: 0 0 0 auto;
+
+	@include lessThatWidth(600px) {
+		grid-auto-flow: row;
+		grid-gap: 20px;
+	}
 
 	> a {
 		@include expand-click-area;
@@ -41,23 +62,47 @@
 .content {
 	flex-grow: 1;
 	padding: 40px 0 80px;
+
+	@include less1280w {
+		padding: 0 0 60px;
+	}
 }
 
 //
 
 .footer {
 	display: grid;
-	grid-gap: 64px;
+	grid-gap: 60px;
 	padding: 40px;
 	font-size: 14px;
 	border-top: 2px solid var(--border-color);
+
+	@include less768w {
+		grid-gap: 32px;
+		padding: 32px;
+	}
 }
 
 .footerTags {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, 16.667%);
+	grid-template-columns: repeat(auto-fill, 15.8%);
 	justify-items: start;
-	grid-gap: 20px;
+	grid-gap: 20px 1%;
+
+	@include less1280w {
+		grid-template-columns: repeat(auto-fill, 23.7%);
+	}
+
+	@include less1024w {
+		grid-template-columns: repeat(auto-fill, 47.5%);
+	}
+
+	@include lessThatWidth(600px) {
+		justify-content: center;
+		justify-items: center;
+		grid-template-columns: repeat(auto-fill, 90%);
+		grid-gap: 8px;
+	}
 
 	> a {
 		@include expand-click-area;
@@ -65,14 +110,22 @@
 }
 
 .footerBottom {
-	display: flex;
+	display: grid;
+	grid-auto-flow: column;
+	justify-content: space-between;
+
+	@include lessThatWidth(600px) {
+		grid-auto-flow: row;
+		justify-content: center;
+		justify-items: center;
+		grid-gap: 20px;
+	}
 }
 
 .footerBottomRight {
 	display: grid;
 	grid-auto-flow: column;
 	grid-gap: 20px;
-	margin: 0 0 0 auto;
 
 	> a {
 		@include expand-click-area;

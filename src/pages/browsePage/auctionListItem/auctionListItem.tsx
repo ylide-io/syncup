@@ -7,7 +7,7 @@ import css from './auctionListItem.module.scss'
 export function AuctionListItem() {
 	return (
 		<div className={css.root}>
-			<ProfilePhoto />
+			<ProfilePhoto className={css.profilePhoto} />
 
 			<div className={css.details}>
 				<div className={css.name}>Bryan Wilcox</div>

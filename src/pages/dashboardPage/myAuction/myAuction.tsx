@@ -6,7 +6,7 @@ import css from './myAuction.module.scss'
 export function MyAuction() {
 	return (
 		<div className={css.root}>
-			<ProfilePhoto />
+			<ProfilePhoto className={css.profilePhoto} />
 
 			<div className={css.details}>
 				<div className={css.name}>Bryan Wilcox</div>

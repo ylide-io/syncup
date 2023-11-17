@@ -3,6 +3,26 @@
 	grid-template-columns: 320px 1fr;
 	grid-gap: 40px;
 	height: 320px;
+
+	@include less1280w {
+		grid-template-columns: 240px 1fr;
+		grid-gap: 32px;
+	}
+
+	@include lessThatWidth(800px) {
+		grid-template-columns: 1fr;
+		height: auto;
+	}
+}
+
+.profilePhoto {
+	@include lessThatWidth(800px) {
+		max-width: 320px;
+	}
+
+	@include lessThatWidth(480px) {
+		max-width: 240px;
+	}
 }
 
 .details {
@@ -22,6 +42,14 @@
 	min-height: 0;
 	font-size: 18px;
 	overflow: hidden;
+
+	@include less1280w {
+		font-size: 16px;
+	}
+
+	@include lessThatWidth(800px) {
+		flex-basis: auto;
+	}
 }
 
 .footer {
@@ -29,4 +57,10 @@
 	grid-auto-flow: column;
 	align-items: center;
 	justify-content: space-between;
+
+	@include lessThatWidth(520px) {
+		grid-auto-flow: row;
+		grid-gap: 20px;
+		justify-items: start;
+	}
 }

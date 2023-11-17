@@ -3,6 +3,15 @@
 	grid-template-columns: 240px 1fr;
 	grid-gap: 40px;
 	align-items: start;
+
+	@include less1280w {
+		grid-template-columns: 200px 1fr;
+		grid-gap: 32px;
+	}
+
+	@include less1024w {
+		grid-template-columns: 1fr;
+	}
 }
 
 //
@@ -17,6 +26,16 @@
 	display: grid;
 	justify-items: start;
 	grid-gap: 8px;
+
+	@include less1024w {
+		display: flex;
+		flex-wrap: wrap;
+		grid-gap: 0;
+
+		> * {
+			margin: 0 8px 8px 0;
+		}
+	}
 }
 
 .sidebarMoreButton {
@@ -33,7 +52,7 @@
 
 .list {
 	display: grid;
-	grid-gap: 64px;
+	grid-gap: 60px;
 }
 
 .moreButton {
