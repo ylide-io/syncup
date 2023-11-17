@@ -81,7 +81,8 @@ a {
 	text-decoration: none;
 	cursor: pointer; // cursor is 'text' for anchors with no [href]
 
-	&:hover {
+	&:hover,
+	&:focus-visible {
 		text-decoration: underline;
 	}
 }

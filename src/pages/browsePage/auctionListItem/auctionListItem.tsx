@@ -1,11 +1,13 @@
 import css from './auctionListItem.module.scss'
 import { Button } from '../../../components/button/button.tsx'
 import { NBSP } from '../../../global.ts'
+import { RoutePath } from '../../../routePath.ts'
+import { ProfilePhoto } from '../../../components/profilePhoto/profilePhoto.tsx'
 
 export function AuctionListItem() {
 	return (
 		<div className={css.root}>
-			<div className={css.photo} />
+			<ProfilePhoto />
 
 			<div className={css.details}>
 				<div className={css.name}>Bryan Wilcox</div>
@@ -27,7 +29,7 @@ export function AuctionListItem() {
 				</div>
 
 				<div className={css.footer}>
-					<Button>Details ►</Button>
+					<Button href={RoutePath.AUCTION}>Details ►</Button>
 
 					<div>
 						Auction ending in <b>5 days 20 hours</b>

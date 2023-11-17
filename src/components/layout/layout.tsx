@@ -11,7 +11,9 @@ export function Layout({ children }: LayoutProps) {
 	return (
 		<div className={css.root}>
 			<div className={css.header}>
-				<LogoSvg />
+				<a className={css.logo} href={RoutePath.ROOT}>
+					<LogoSvg />
+				</a>
 
 				<div className={css.headerRight}>
 					<Link to={RoutePath.ROOT}>Browse Auctions</Link>

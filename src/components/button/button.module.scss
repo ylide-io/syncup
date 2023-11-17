@@ -8,7 +8,12 @@
 	justify-content: center;
 	position: relative;
 	border: 2px solid;
-	border-radius: 22px;
+	border-radius: 99px;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: none;
+	}
 
 	> i {
 		min-width: 20px;

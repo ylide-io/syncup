@@ -16,6 +16,14 @@
 	height: 100px;
 }
 
+.logo {
+	color: var(--text-color);
+
+	&:focus-visible {
+		color: var(--accent-color);
+	}
+}
+
 .headerRight {
 	display: grid;
 	grid-auto-flow: column;

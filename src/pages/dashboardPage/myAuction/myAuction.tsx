@@ -1,11 +1,12 @@
 import css from './myAuction.module.scss'
 import { Button, ButtonSize } from '../../../components/button/button.tsx'
 import { NBSP } from '../../../global.ts'
+import { ProfilePhoto } from '../../../components/profilePhoto/profilePhoto.tsx'
 
 export function MyAuction() {
 	return (
 		<div className={css.root}>
-			<div className={css.photo} />
+			<ProfilePhoto />
 
 			<div className={css.details}>
 				<div className={css.name}>Bryan Wilcox</div>
