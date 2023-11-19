@@ -1,5 +1,7 @@
-import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
+import { createWeb3Modal, defaultWagmiConfig, useWeb3ModalTheme } from '@web3modal/wagmi/react'
+import { PropsWithChildren } from 'react'
 import { mainnet, polygon } from 'viem/chains'
+import { WagmiConfig } from 'wagmi'
 
 // https://docs.walletconnect.com/web3modal/react/about
 export function setupWeb3Modal() {
@@ -21,4 +23,21 @@ export function setupWeb3Modal() {
 	createWeb3Modal({ wagmiConfig, projectId, chains })
 
 	return wagmiConfig
+}
+
+//
+
+const wagmiConfig = setupWeb3Modal()
+
+type Web3ModalManagerProps = PropsWithChildren
+
+export function Web3ModalManager({ children }: Web3ModalManagerProps) {
+	const { setThemeVariables } = useWeb3ModalTheme()
+
+	setThemeVariables({
+		'--w3m-accent': '#f8cb53',
+	})
+
+	// @ts-expect-error config
+	return <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
 }
