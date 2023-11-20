@@ -19,11 +19,16 @@ module.exports = {
 	},
 	plugins: ['react-refresh', 'simple-import-sort'],
 	rules: {
-		'simple-import-sort/imports': 'warn',
-		'simple-import-sort/exports': 'warn',
+		'no-inner-declarations': 'off',
+		'@typescript-eslint/no-unused-vars': 'off',
 		'@typescript-eslint/no-redundant-type-constituents': 'off',
+		'@typescript-eslint/no-explicit-any': 'off',
 		'@typescript-eslint/prefer-nullish-coalescing': 'off',
+		'@typescript-eslint/no-namespace': 'off',
+		'@typescript-eslint/restrict-template-expressions': 'off',
 		'react-refresh/only-export-components': 'off',
 		'react/display-name': 'off',
+		'simple-import-sort/imports': 'warn',
+		'simple-import-sort/exports': 'warn',
 	},
 }
