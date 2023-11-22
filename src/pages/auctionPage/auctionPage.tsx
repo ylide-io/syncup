@@ -34,6 +34,7 @@ export function AuctionPage() {
 			console.log('bids', bids)
 			return bids
 		},
+		staleTime: 60 * 1000,
 	})
 
 	const [isHistoryExpanded, setHistoryExpanded] = useState(true)

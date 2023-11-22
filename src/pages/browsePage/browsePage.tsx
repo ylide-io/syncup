@@ -25,7 +25,7 @@ export function BrowsePage() {
 		queryFn: async () => {
 			const [allNfts, experts] = await Promise.all([getAllNfts(), BackendApi.getExperts()])
 			const allAsks = await getAsks({ nftIds: allNfts.nfts.map(nft => nft.identifier) })
-			console.log('allAsks', allAsks)
+
 			return allNfts.nfts.reduce<
 				{
 					nft: NFT

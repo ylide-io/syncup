@@ -4,5 +4,5 @@ export const ReactQueryKey = {
 	tags: ['tags'],
 	rates: ['rates'],
 	auctions: ['auctions'],
-	auction: (id: string) => ['auction', id, new Date().getMinutes()],
+	auction: (id: string) => ['auction', id],
 }
