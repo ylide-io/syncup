@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { Chain, OpenSeaSDK } from 'opensea-js'
 
+const collectionSlug = 'syncdup'
 const openseaApiKey = 'adc798f1e94a41e4900e36815295371b'
 const tokenAddress = '0x965a10b66e4ae91f0d87dd5628e6276741c3e15f'
 const tokenChain = Chain.Polygon
@@ -24,8 +25,12 @@ const openseaSDK = new OpenSeaSDK(
 	signer,
 )
 
-export async function getAuctionDetails(params: { auctionId: string }) {
+export async function getNftDetails(params: { auctionId: string }) {
 	return await openseaSDK.api.getNFT(tokenChain, tokenAddress, params.auctionId)
+}
+
+export async function getAllNfts() {
+	return await openseaSDK.api.getNFTsByCollection(collectionSlug)
 }
 
 export async function getBids(params: { auctionId: string }) {
@@ -38,16 +43,16 @@ export async function getBids(params: { auctionId: string }) {
 	})
 }
 
-export async function getUserBids(params: { address: string; auctionId?: string }) {
+export async function getUserBids(params: { address: string; auctionIds: string[] }) {
 	return await openseaSDK.api.getOrders({
 		side: 'bid',
-		maker: params.address,
+		maker: params.address.toLowerCase(),
 		assetContractAddress: tokenAddress,
-		tokenId: params.auctionId,
+		tokenIds: params.auctionIds,
 	})
 }
 
-export async function createOrder(params: { auctionId: string }) {
+export async function createBid(params: { auctionId: string }) {
 	return await openseaSDK.createOffer({
 		asset: {
 			tokenId: params.auctionId,

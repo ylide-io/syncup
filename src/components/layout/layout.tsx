@@ -42,9 +42,9 @@ export function Layout({ children }: LayoutProps) {
 			<div className={css.content}>{children}</div>
 
 			<div className={css.footer}>
-				{tagsContext?.data ? (
+				{tagsContext.data ? (
 					<div className={css.footerTags}>
-						{tagsContext.data.map(tag => (
+						{tagsContext.data.items.map(tag => (
 							<a key={tag} href="/">
 								{tag}
 							</a>

@@ -8,9 +8,11 @@ import { Layout } from '../../components/layout/layout.tsx'
 import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { TagsContext } from '../../components/tagsContext/tagsContext.tsx'
 import { ReactQueryKey } from '../../global.ts'
-import { getAuctionDetails } from '../../utils/opensea.ts'
+import { getNftDetails } from '../../utils/opensea.ts'
 import { AuctionListItem } from './auctionListItem/auctionListItem.tsx'
 import css from './browsePage.module.scss'
+
+const SIDEBAR_TAG_COUNT = 7
 
 export function BrowsePage() {
 	const tagsContext = useContext(TagsContext)
@@ -18,11 +20,11 @@ export function BrowsePage() {
 	const auctionsQuery = useQuery({
 		queryKey: ReactQueryKey.auctions,
 		queryFn: async () => {
-			return await BackendApi.getAuctions().then(auctions =>
+			return await BackendApi.getExperts().then(experts =>
 				Promise.all(
-					auctions.map(async auction => ({
-						auction,
-						details: await getAuctionDetails({ auctionId: auction.id }),
+					experts.map(async expert => ({
+						auction: expert,
+						details: await getNftDetails({ auctionId: expert.id }),
 					})),
 				),
 			)
@@ -35,19 +37,21 @@ export function BrowsePage() {
 				<div className={css.sidebar}>
 					<SectionHeader>Filter by Expertise</SectionHeader>
 
-					{tagsContext?.data ? (
+					{tagsContext.data ? (
 						<>
 							<div className={css.tagList}>
-								{tagsContext.data.slice(0, 7).map(tag => (
+								{tagsContext.data.items.slice(0, SIDEBAR_TAG_COUNT).map(tag => (
 									<Button key={tag} size={ButtonSize.SMALL} look={ButtonLook.SECONDARY}>
 										{tag}
 									</Button>
 								))}
 							</div>
 
-							<a className={css.sidebarMoreButton} href="/">
-								More ↓
-							</a>
+							{tagsContext.data.items.length > SIDEBAR_TAG_COUNT && (
+								<a className={css.sidebarMoreButton} href="/">
+									More ↓
+								</a>
+							)}
 						</>
 					) : (
 						<SpinningLoader />

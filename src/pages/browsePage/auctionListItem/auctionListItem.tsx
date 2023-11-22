@@ -1,3 +1,5 @@
+import { generatePath } from 'react-router-dom'
+
 import { Button } from '../../../components/button/button.tsx'
 import { ProfilePhoto } from '../../../components/profilePhoto/profilePhoto.tsx'
 import { NBSP } from '../../../global.ts'
@@ -29,7 +31,7 @@ export function AuctionListItem() {
 				</div>
 
 				<div className={css.footer}>
-					<Button href={RoutePath.AUCTION}>Details ►</Button>
+					<Button href={generatePath(RoutePath.AUCTION, { auctionId: '1' })}>Details ►</Button>
 
 					<div>
 						Auction ending in <b>5 days 20 hours</b>

@@ -1,5 +1,5 @@
 export enum RoutePath {
 	ROOT = '/',
-	AUCTION = '/auction',
+	AUCTION = '/auction/:auctionId',
 	DASHBOARD = '/dashboard',
 }

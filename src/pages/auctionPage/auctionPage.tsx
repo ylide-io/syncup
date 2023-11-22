@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import { useContext, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { Button, ButtonLook, ButtonSize } from '../../components/button/button.tsx'
 import { SectionHeader } from '../../components/components.tsx'
@@ -11,6 +12,7 @@ import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
 import { ReactQueryKey } from '../../global.ts'
 import ExternalSvg from '../../icons/external.svg'
+import { invariant } from '../../utils/assert.ts'
 import { DateFormatStyle, formatDate } from '../../utils/date.ts'
 import { formatCryptoAmount, formatFiat } from '../../utils/number.ts'
 import { getBids } from '../../utils/opensea.ts'
@@ -20,13 +22,16 @@ import css from './auctionPage.module.scss'
 const FOLDED_HISTORY_SIZE = 3
 
 export function AuctionPage() {
+	const { auctionId } = useParams<{ auctionId: string }>()
+	invariant(auctionId)
+
 	const cryptoContext = useContext(CryptoContext)
 
 	const bidsQuery = useQuery({
-		queryKey: ReactQueryKey.auction('1'),
+		queryKey: ReactQueryKey.auction(auctionId),
 		queryFn: async () => {
-			const bids = await getBids({ auctionId: '1' })
-			console.log(bids)
+			const bids = await getBids({ auctionId })
+			console.log('bids', bids)
 			return bids
 		},
 	})
