@@ -79,12 +79,14 @@ export function BrowsePage() {
 				</div>
 
 				<div className={css.content}>
-					{auctionsQuery.data ? (
+					{auctionsQuery.data?.length ? (
 						<div className={css.list}>
 							{auctionsQuery.data.map(({ nft, ask, expert }) => (
 								<AuctionListItem key={nft.identifier} nft={nft} ask={ask} expert={expert} />
 							))}
 						</div>
+					) : auctionsQuery.data ? (
+						<ErrorMessage>No auctions at the moment</ErrorMessage>
 					) : auctionsQuery.isLoading ? (
 						<SpinningLoader />
 					) : (
