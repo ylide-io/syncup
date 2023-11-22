@@ -29,7 +29,7 @@ export function BrowsePage() {
 			return allNfts.nfts.reduce<
 				{
 					nft: NFT
-					ask: OrderV2
+					ask?: OrderV2
 					expert: BackendApi.Expert
 				}[]
 			>((res, nft) => {
@@ -38,7 +38,7 @@ export function BrowsePage() {
 					order.makerAssetBundle.assets.find(asset => asset.tokenId === nft.identifier),
 				)
 
-				if (expert && ask) {
+				if (expert) {
 					res.push({
 						nft,
 						ask,
