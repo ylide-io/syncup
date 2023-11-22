@@ -27,6 +27,7 @@ module.exports = {
 		'@typescript-eslint/no-namespace': 'off',
 		'@typescript-eslint/restrict-template-expressions': 'off',
 		'@typescript-eslint/no-confusing-void-expression': 'off',
+		'@typescript-eslint/no-unnecessary-condition': 'off',
 		'react-refresh/only-export-components': 'off',
 		'react/display-name': 'off',
 		'simple-import-sort/imports': 'warn',

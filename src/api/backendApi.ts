@@ -27,8 +27,8 @@ export namespace BackendApi {
 		achievements: string[]
 		imgUrl: string
 		socialLinks: string[]
-		tags: [{ name: string }]
-		slots: [{ tokenId: string }]
+		tags: { name: string }[]
+		slots: { tokenId: string }[]
 	}
 
 	export type ExpertsResponse = Expert[]

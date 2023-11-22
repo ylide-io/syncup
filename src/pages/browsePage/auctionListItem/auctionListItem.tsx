@@ -30,7 +30,7 @@ export function AuctionListItem({ nft, ask, expert }: AuctionListItemProps) {
 				{!!expert.description && <div className={css.bio}>{expert.description}</div>}
 
 				<div className={css.footer}>
-					<Button href={generatePath(RoutePath.AUCTION, { auctionId: nft.identifier })}>Details ►</Button>
+					<Button href={generatePath(RoutePath.AUCTION, { nftId: nft.identifier })}>Details ►</Button>
 
 					<div>{renderAuctionStatus(ask)}</div>
 				</div>
