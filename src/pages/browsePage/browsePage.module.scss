@@ -54,9 +54,3 @@
 	display: grid;
 	grid-gap: 60px;
 }
-
-.moreButton {
-	@include expand-click-area;
-	margin: auto;
-	font-size: 18px;
-}

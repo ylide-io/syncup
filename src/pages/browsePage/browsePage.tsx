@@ -80,17 +80,11 @@ export function BrowsePage() {
 
 				<div className={css.content}>
 					{auctionsQuery.data ? (
-						<>
-							<div className={css.list}>
-								{auctionsQuery.data.map(({ nft, ask, expert }) => (
-									<AuctionListItem key={nft.identifier} nft={nft} ask={ask} expert={expert} />
-								))}
-							</div>
-
-							<a className={css.moreButton} href="/">
-								Show more experts ↓
-							</a>
-						</>
+						<div className={css.list}>
+							{auctionsQuery.data.map(({ nft, ask, expert }) => (
+								<AuctionListItem key={nft.identifier} nft={nft} ask={ask} expert={expert} />
+							))}
+						</div>
 					) : auctionsQuery.isLoading ? (
 						<SpinningLoader />
 					) : (
