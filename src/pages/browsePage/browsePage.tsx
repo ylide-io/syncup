@@ -1,14 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
+import { NFT } from 'opensea-js'
+import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext } from 'react'
 
 import { BackendApi } from '../../api/backendApi.ts'
 import { Button, ButtonLook, ButtonSize } from '../../components/button/button.tsx'
 import { SectionHeader } from '../../components/components.tsx'
+import { ErrorMessage } from '../../components/errorMessage/errorMessage.tsx'
 import { Layout } from '../../components/layout/layout.tsx'
 import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { TagsContext } from '../../components/tagsContext/tagsContext.tsx'
 import { ReactQueryKey } from '../../global.ts'
-import { getNftDetails } from '../../utils/opensea.ts'
+import { getAllNfts, getAsks } from '../../utils/opensea.ts'
 import { AuctionListItem } from './auctionListItem/auctionListItem.tsx'
 import css from './browsePage.module.scss'
 
@@ -20,14 +23,31 @@ export function BrowsePage() {
 	const auctionsQuery = useQuery({
 		queryKey: ReactQueryKey.auctions,
 		queryFn: async () => {
-			return await BackendApi.getExperts().then(experts =>
-				Promise.all(
-					experts.map(async expert => ({
-						auction: expert,
-						details: await getNftDetails({ auctionId: expert.id }),
-					})),
-				),
-			)
+			const [allNfts, experts] = await Promise.all([getAllNfts(), BackendApi.getExperts()])
+			const allAsks = await getAsks({ nftIds: allNfts.nfts.map(nft => nft.identifier) })
+			console.log('allAsks', allAsks)
+			return allNfts.nfts.reduce<
+				{
+					nft: NFT
+					ask: OrderV2
+					expert: BackendApi.Expert
+				}[]
+			>((res, nft) => {
+				const expert = experts.find(expert => expert.slots.some(slot => slot.tokenId === nft.identifier))
+				const ask = allAsks.orders.find(order =>
+					order.makerAssetBundle.assets.find(asset => asset.tokenId === nft.identifier),
+				)
+
+				if (expert && ask) {
+					res.push({
+						nft,
+						ask,
+						expert,
+					})
+				}
+
+				return res
+			}, [])
 		},
 	})
 
@@ -62,9 +82,9 @@ export function BrowsePage() {
 					{auctionsQuery.data ? (
 						<>
 							<div className={css.list}>
-								<AuctionListItem />
-								<AuctionListItem />
-								<AuctionListItem />
+								{auctionsQuery.data.map(({ nft, ask, expert }) => (
+									<AuctionListItem key={nft.identifier} nft={nft} ask={ask} expert={expert} />
+								))}
 							</div>
 
 							<a className={css.moreButton} href="/">
@@ -74,7 +94,7 @@ export function BrowsePage() {
 					) : auctionsQuery.isLoading ? (
 						<SpinningLoader />
 					) : (
-						'Failed to load 😟'
+						<ErrorMessage>Failed to load 😟</ErrorMessage>
 					)}
 				</div>
 			</div>

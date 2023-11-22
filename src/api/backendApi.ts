@@ -22,6 +22,9 @@ export namespace BackendApi {
 		id: string
 		name: string
 		description: string
+		position: string
+		company: string
+		achievements: string[]
 		imgUrl: string
 		socialLinks: string[]
 		tags: [{ name: string }]

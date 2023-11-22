@@ -30,7 +30,7 @@ export function AuctionPage() {
 	const bidsQuery = useQuery({
 		queryKey: ReactQueryKey.auction(auctionId),
 		queryFn: async () => {
-			const bids = await getBids({ auctionId })
+			const bids = await getBids({ nftId: auctionId })
 			console.log('bids', bids)
 			return bids
 		},

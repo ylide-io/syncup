@@ -25,37 +25,59 @@ const openseaSDK = new OpenSeaSDK(
 	signer,
 )
 
-export async function getNftDetails(params: { auctionId: string }) {
-	return await openseaSDK.api.getNFT(tokenChain, tokenAddress, params.auctionId)
+export async function getNftDetails(params: { nftId: string }) {
+	return await openseaSDK.api.getNFT(tokenChain, tokenAddress, params.nftId)
 }
 
 export async function getAllNfts() {
 	return await openseaSDK.api.getNFTsByCollection(collectionSlug)
 }
 
-export async function getBids(params: { auctionId: string }) {
+export async function getAsks(params: { nftIds: string[] }) {
+	return await openseaSDK.api.getOrders({
+		side: 'ask',
+		assetContractAddress: tokenAddress,
+		tokenIds: params.nftIds,
+		orderBy: 'created_date',
+		orderDirection: 'desc',
+	})
+}
+
+export async function getLatestAsk(params: { nftId: string }) {
+	return (
+		await openseaSDK.api.getOrders({
+			side: 'ask',
+			assetContractAddress: tokenAddress,
+			tokenId: params.nftId,
+			orderBy: 'created_date',
+			orderDirection: 'desc',
+		})
+	).orders[0]
+}
+
+export async function getBids(params: { nftId: string }) {
 	return await openseaSDK.api.getOrders({
 		side: 'bid',
 		assetContractAddress: tokenAddress,
-		tokenId: params.auctionId,
+		tokenId: params.nftId,
 		orderBy: 'eth_price',
 		orderDirection: 'desc',
 	})
 }
 
-export async function getUserBids(params: { address: string; auctionIds: string[] }) {
+export async function getUserBids(params: { address: string; nftIds: string[] }) {
 	return await openseaSDK.api.getOrders({
 		side: 'bid',
 		maker: params.address.toLowerCase(),
 		assetContractAddress: tokenAddress,
-		tokenIds: params.auctionIds,
+		tokenIds: params.nftIds,
 	})
 }
 
-export async function createBid(params: { auctionId: string }) {
+export async function createBid(params: { nftId: string }) {
 	return await openseaSDK.createOffer({
 		asset: {
-			tokenId: params.auctionId,
+			tokenId: params.nftId,
 			tokenAddress,
 		},
 		accountAddress,

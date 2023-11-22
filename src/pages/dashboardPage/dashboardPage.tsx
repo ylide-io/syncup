@@ -19,7 +19,7 @@ export function DashboardPage() {
 			const allNfts = await getAllNfts()
 			const bids = await getUserBids({
 				address: '0x37d524c92b46277d9167fe936e45baa4f0568a73',
-				auctionIds: allNfts.nfts.map(nft => nft.identifier),
+				nftIds: allNfts.nfts.map(nft => nft.identifier),
 			})
 			console.log('allNfts', allNfts)
 			console.log('bids', bids)
