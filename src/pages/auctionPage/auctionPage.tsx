@@ -1,16 +1,38 @@
+import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { Button, ButtonLook, ButtonSize } from '../../components/button/button.tsx'
 import { SectionHeader } from '../../components/components.tsx'
+import { CryptoContext } from '../../components/cryptoContext/cryptoContext.tsx'
+import { ErrorMessage } from '../../components/errorMessage/errorMessage.tsx'
 import { Layout } from '../../components/layout/layout.tsx'
+import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
+import { ReactQueryKey } from '../../global.ts'
 import ExternalSvg from '../../icons/external.svg'
+import { DateFormatStyle, formatDate } from '../../utils/date.ts'
+import { formatCryptoAmount, formatFiat } from '../../utils/number.ts'
+import { getBids } from '../../utils/opensea.ts'
+import { truncateAddress } from '../../utils/string.ts'
 import css from './auctionPage.module.scss'
 
+const FOLDED_HISTORY_SIZE = 3
+
 export function AuctionPage() {
-	const history = ['3.5', '3.0', '2.5', '2.0', '1.5', '1.0']
-	const [isHistoryFolded, setHistoryFolded] = useState(true)
+	const cryptoContext = useContext(CryptoContext)
+
+	const bidsQuery = useQuery({
+		queryKey: ReactQueryKey.auction('1'),
+		queryFn: async () => {
+			const bids = await getBids({ auctionId: '1' })
+			console.log(bids)
+			return bids
+		},
+	})
+
+	const [isHistoryExpanded, setHistoryExpanded] = useState(true)
+	const isHistoryFolded = bidsQuery.data && bidsQuery.data.orders.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
 
 	return (
 		<Layout>
@@ -77,32 +99,46 @@ export function AuctionPage() {
 					<div className={clsx(css.history, isHistoryFolded && css.history_folded)}>
 						<SectionHeader>History</SectionHeader>
 
-						<div className={css.historyList}>
-							{history.slice(0, isHistoryFolded ? 3 : history.length).map((price, i) => (
-								<div key={i} className={css.historyItem}>
-									<div className={css.historyTitle}>Bid placed by 0x52e316e3..d80545ee</div>
-									<div className={css.historyPrice}>
-										{price} ETH
-										<div>~6481 USD</div>
-									</div>
-									<div className={css.historyDate}>
-										14 November 12:42{' '}
-										<a>
-											<ExternalSvg />
-										</a>
-									</div>
-								</div>
-							))}
-						</div>
+						{bidsQuery.data ? (
+							<>
+								<div className={css.historyList}>
+									{bidsQuery.data.orders
+										.slice(0, isHistoryFolded ? FOLDED_HISTORY_SIZE : bidsQuery.data.orders.length)
+										.map((order, i) => {
+											const amount = formatCryptoAmount(order.currentPrice)
+											const amountUsd = cryptoContext.getUsdPrice(
+												+formatCryptoAmount(order.currentPrice),
+											)
 
-						{isHistoryFolded && (
-							<a
-								onClick={() => {
-									setHistoryFolded(false)
-								}}
-							>
-								Full History ↓
-							</a>
+											return (
+												<div key={i} className={css.historyItem}>
+													<div className={css.historyTitle}>
+														Bid placed by {truncateAddress(order.maker.address, 12)}
+													</div>
+													<div className={css.historyPrice}>
+														{amount} ETH
+														{amountUsd && <div>~{formatFiat(amountUsd)} USD</div>}
+													</div>
+													<div className={css.historyDate} title={order.createdDate}>
+														{formatDate(
+															Date.parse(order.createdDate),
+															DateFormatStyle.LONG,
+														)}{' '}
+														<a>
+															<ExternalSvg />
+														</a>
+													</div>
+												</div>
+											)
+										})}
+								</div>
+
+								{isHistoryFolded && <a onClick={() => setHistoryExpanded(true)}>Full History ↓</a>}
+							</>
+						) : bidsQuery.isLoading ? (
+							<SpinningLoader />
+						) : (
+							<ErrorMessage>Failed to load bids 😟</ErrorMessage>
 						)}
 					</div>
 				</div>

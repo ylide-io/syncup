@@ -1,17 +1,20 @@
 import { useWeb3Modal } from '@web3modal/wagmi/react'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import { RoutePath } from '../../routePath.ts'
 import { truncateAddress } from '../../utils/string.ts'
 import { Button, ButtonLook } from '../button/button.tsx'
+import { SpinningLoader } from '../loaders/loaders.tsx'
+import { TagsContext } from '../tagsContext/tagsContext.tsx'
 import css from './layout.module.scss'
 import LogoSvg from './logo.svg'
 
 type LayoutProps = PropsWithChildren
 
 export function Layout({ children }: LayoutProps) {
+	const tagsContext = useContext(TagsContext)
 	const { open } = useWeb3Modal()
 	const { address } = useAccount()
 
@@ -39,29 +42,17 @@ export function Layout({ children }: LayoutProps) {
 			<div className={css.content}>{children}</div>
 
 			<div className={css.footer}>
-				<div className={css.footerTags}>
-					{[
-						'B2B Sales',
-						'B2C Sales',
-						'Bootstrapping',
-						'Financial Planning',
-						'Fundraising',
-						'Growth Marketing',
-						'Manufacturing',
-						'People & Hiring',
-						'Product & Engineering',
-						'Product Marketing',
-						'Public Relations',
-						'SEM & SEO',
-						'Social Media',
-						'Strategy & Operations',
-						'Growth Marketing',
-					].map(tag => (
-						<a key={tag} href="/">
-							{tag}
-						</a>
-					))}
-				</div>
+				{tagsContext?.data ? (
+					<div className={css.footerTags}>
+						{tagsContext.data.map(tag => (
+							<a key={tag} href="/">
+								{tag}
+							</a>
+						))}
+					</div>
+				) : (
+					<SpinningLoader />
+				)}
 
 				<div className={css.footerBottom}>
 					<div>© 2023 SyncdUp, Inc.</div>

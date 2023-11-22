@@ -1,3 +1,4 @@
+import { asyncDelay } from '../utils/async.ts'
 import { createCleanSerachParams } from '../utils/url.ts'
 
 export namespace BackendApi {
@@ -27,14 +28,31 @@ export namespace BackendApi {
 	//
 
 	export async function getAuctions() {
-		return await request('')
+		await asyncDelay(700)
+		return [{ id: '1' }]
 	}
 
-	export async function getAuction() {
-		return await request('')
-	}
+	//
 
-	export async function getMyAuctions() {
-		return await request('')
+	export type GetTagsResponse = string[]
+
+	export async function getTags(): Promise<GetTagsResponse> {
+		await asyncDelay(500)
+		return [
+			'B2B Sales',
+			'B2C Sales',
+			'Bootstrapping',
+			'Financial Planning',
+			'Fundraising',
+			'Growth Marketing',
+			'Manufacturing',
+			'People & Hiring',
+			'Product & Engineering',
+			'Product Marketing',
+			'Public Relations',
+			'SEM & SEO',
+			'Social Media',
+			'Strategy & Operations',
+		]
 	}
 }

@@ -1,52 +1,59 @@
 import { ethers } from 'ethers'
 import { Chain, OpenSeaSDK } from 'opensea-js'
 
-async function makeOrder() {
-	const collectionSlug = 'syncdup'
-	const openseaApiKey = 'adc798f1e94a41e4900e36815295371b'
-	const tokenChain = Chain.Polygon
-	const tokenAddress = '0x965a10b66e4ae91f0d87dd5628e6276741c3e15f'
-	const tokenId = '1'
+const openseaApiKey = 'adc798f1e94a41e4900e36815295371b'
+const tokenAddress = '0x965a10b66e4ae91f0d87dd5628e6276741c3e15f'
+const tokenChain = Chain.Polygon
 
-	// OpenSea SDK accepts providers and signers from ethers v5
-	// @ts-expect-error - window
-	const provider = new ethers.providers.Web3Provider(window.ethereum)
-	const signer = provider.getSigner()
-	const accountAddress = await signer.getAddress()
-	// patch signer for opensea
-	// @ts-expect-error - patch signer for opensea
-	signer.address = accountAddress
-	const openseaSDK = new OpenSeaSDK(
-		provider,
-		{
-			chain: tokenChain,
-			apiKey: openseaApiKey,
+// OpenSea SDK accepts providers and signers from ethers v5
+// @ts-expect-error - window
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+const signer = provider.getSigner()
+const accountAddress = await signer.getAddress()
+// patch signer for opensea
+// @ts-expect-error - patch signer for opensea
+signer.address = accountAddress
+const openseaSDK = new OpenSeaSDK(
+	provider,
+	{
+		chain: tokenChain,
+		apiKey: openseaApiKey,
+	},
+	undefined,
+	// @ts-expect-error - patched signer
+	signer,
+)
+
+export async function getAuctionDetails(params: { auctionId: string }) {
+	return await openseaSDK.api.getNFT(tokenChain, tokenAddress, params.auctionId)
+}
+
+export async function getBids(params: { auctionId: string }) {
+	return await openseaSDK.api.getOrders({
+		side: 'bid',
+		assetContractAddress: tokenAddress,
+		tokenId: params.auctionId,
+		orderBy: 'eth_price',
+		orderDirection: 'desc',
+	})
+}
+
+export async function getUserBids(params: { address: string; auctionId?: string }) {
+	return await openseaSDK.api.getOrders({
+		side: 'bid',
+		maker: params.address,
+		assetContractAddress: tokenAddress,
+		tokenId: params.auctionId,
+	})
+}
+
+export async function createOrder(params: { auctionId: string }) {
+	return await openseaSDK.createOffer({
+		asset: {
+			tokenId: params.auctionId,
+			tokenAddress,
 		},
-		undefined,
-		// @ts-expect-error - patched signer
-		signer,
-	)
-
-	// bid by signing with user wallet
-	// const order = await openseaSDK.createOffer({
-	// 	asset: {
-	// 		tokenId,
-	// 		tokenAddress,
-	// 	},
-	// 	accountAddress,
-	// 	startAmount: 0.001,
-	// })
-
-	// delete bid
-	// openseaSDK.cancelOrder({ order, accountAddress });
-
-	// get info on auction
-	// await openseaSDK.api.getOrders({ side: 'bid', assetContractAddress: tokenAddress, tokenId })
-
-	// get info on bids
-	// const offers = await openseaSDK.api.getOrders({
-	// 	side: 'bid',
-	// 	assetContractAddress: tokenAddress,
-	// 	tokenId,
-	// })
+		accountAddress,
+		startAmount: 0.001,
+	})
 }

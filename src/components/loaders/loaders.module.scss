@@ -1,0 +1,7 @@
+.spinningLoader {
+	display: grid;
+	grid-template-columns: 20px 1fr;
+	align-items: center;
+	grid-gap: 8px;
+	font-size: 14px;
+}
