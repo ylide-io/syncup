@@ -30,6 +30,18 @@ export namespace BackendApi {
 
 	//
 
+	export async function getAuthNonce({ address }: { address: string }) {
+		return await request<{ nonce: string }>('/auth/nonce', { query: { address: address.toLowerCase() } })
+	}
+
+	//
+
+	export async function getAuthToken({ address, signature }: { address: string; signature: string }) {
+		return await request<{ token: string }>('/auth', { data: { address: address.toLowerCase(), signature } })
+	}
+
+	//
+
 	export interface Expert {
 		id: string
 		name: string
