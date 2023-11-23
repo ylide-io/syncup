@@ -22,9 +22,9 @@ export function Layout({ children }: LayoutProps) {
 	return (
 		<div className={css.root}>
 			<div className={css.header}>
-				<a className={css.logo} href={generatePath(RoutePath.ROOT)}>
+				<Link className={css.logo} to={generatePath(RoutePath.ROOT)}>
 					<LogoSvg />
-				</a>
+				</Link>
 
 				<div className={css.headerRight}>
 					<Link to={generatePath(RoutePath.ROOT)}>Browse Auctions</Link>
