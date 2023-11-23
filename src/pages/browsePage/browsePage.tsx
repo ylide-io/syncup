@@ -1,6 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { NFT } from 'opensea-js'
-import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext } from 'react'
 import { generatePath, useSearchParams } from 'react-router-dom'
 
@@ -13,7 +11,6 @@ import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { TagsContext } from '../../components/tagsContext/tagsContext.tsx'
 import { ReactQueryKey } from '../../global.ts'
 import { FILTER_BY_TAG_PARAM, RoutePath } from '../../routePath.ts'
-import { getAllNfts, getAsks } from '../../utils/opensea.ts'
 import { buildUrl } from '../../utils/url.ts'
 import { AuctionListItem } from './auctionListItem/auctionListItem.tsx'
 import css from './browsePage.module.scss'
@@ -26,37 +23,18 @@ export function BrowsePage() {
 
 	const tagsContext = useContext(TagsContext)
 
-	const auctionsQuery = useQuery({
+	const slotsQuery = useQuery({
 		queryKey: ReactQueryKey.auctions(filterByTag),
 		queryFn: async () => {
-			const [allNfts, experts] = await Promise.all([
-				getAllNfts(),
-				BackendApi.getExperts({ filterByTags: filterByTag ? [filterByTag] : undefined }),
-			])
-			const allAsks = await getAsks({ nftIds: allNfts.nfts.map(nft => nft.identifier) })
-
-			return allNfts.nfts.reduce<
-				{
-					nft: NFT
-					ask?: OrderV2
-					expert: BackendApi.Expert
-				}[]
-			>((res, nft) => {
-				const expert = experts.find(expert => expert.slots.some(slot => slot.tokenId === nft.identifier))
-				const ask = allAsks.orders.find(order =>
-					order.makerAssetBundle.assets.find(asset => asset.tokenId === nft.identifier),
-				)
-
-				if (expert) {
-					res.push({
-						nft,
-						ask,
-						expert,
-					})
-				}
-
-				return res
-			}, [])
+			const experts = await BackendApi.getExperts({ filterByTags: filterByTag ? [filterByTag] : undefined })
+			const slots = experts
+				.reduce<{ slot: BackendApi.GetExpertsSlot; expert: BackendApi.Expert }[]>((res, it) => {
+					res.push(...it.slots.map(slot => ({ slot, expert: it })))
+					return res
+				}, [])
+				.sort((a, b) => Date.parse(a.slot.ask.createdDate) - Date.parse(b.slot.ask.createdDate))
+			console.log('slots', slots)
+			return slots
 		},
 	})
 
@@ -98,15 +76,20 @@ export function BrowsePage() {
 				</div>
 
 				<div className={css.content}>
-					{auctionsQuery.data?.length ? (
+					{slotsQuery.data?.length ? (
 						<div className={css.list}>
-							{auctionsQuery.data.map(({ nft, ask, expert }) => (
-								<AuctionListItem key={nft.identifier} nft={nft} ask={ask} expert={expert} />
+							{slotsQuery.data.map(item => (
+								<AuctionListItem
+									key={item.slot.tokenId}
+									nft={item.slot.nft}
+									ask={item.slot.ask}
+									expert={item.expert}
+								/>
 							))}
 						</div>
-					) : auctionsQuery.data ? (
+					) : slotsQuery.data ? (
 						<ErrorMessage>No auctions at the moment</ErrorMessage>
-					) : auctionsQuery.isLoading ? (
+					) : slotsQuery.isLoading ? (
 						<SpinningLoader />
 					) : (
 						<ErrorMessage>Failed to load 😟</ErrorMessage>

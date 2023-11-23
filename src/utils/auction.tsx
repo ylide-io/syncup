@@ -1,18 +1,28 @@
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 
-import { DateFormatStyle, formatDate } from './date.ts'
+import { DASH } from '../global.ts'
+import { formatDuration } from './date.ts'
 
 export function renderAuctionStatus(ask: OrderV2 | undefined) {
-	const closingDate = ask?.closingDate && Date.parse(ask.closingDate)
+	const duration = ask?.closingDate ? formatDuration(Date.now() - Date.parse(ask?.closingDate)) : undefined
 
 	return (
 		<>
-			{!closingDate ? (
-				'Auction ended'
-			) : (
+			{ask?.finalized ? (
 				<>
-					Auction ending on <b>{formatDate(closingDate, DateFormatStyle.LONG)}</b>
+					Auction ended{' '}
+					{duration != null && (
+						<>
+							<b title={ask?.closingDate || undefined}>{duration}</b> ago
+						</>
+					)}
 				</>
+			) : duration != null ? (
+				<>
+					Auction ending in <b title={ask?.closingDate || undefined}>{duration}</b>
+				</>
+			) : (
+				DASH
 			)}
 		</>
 	)

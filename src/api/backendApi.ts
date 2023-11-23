@@ -40,10 +40,19 @@ export namespace BackendApi {
 		imgUrl: string
 		socialLinks: string[]
 		tags: { name: string }[]
-		slots: { tokenId: string }[]
 	}
 
-	export type GetExpertsResponse = Expert[]
+	export interface GetExpertsSlot {
+		tokenId: string
+		ask: OrderV2
+		nft: NFT
+	}
+
+	export interface GetExpertsItem extends Expert {
+		slots: GetExpertsSlot[]
+	}
+
+	export type GetExpertsResponse = GetExpertsItem[]
 
 	export async function getExperts({ filterByTags }: { filterByTags?: string[] } = {}) {
 		return await request<GetExpertsResponse>('/expert', { query: { tags: filterByTags } })
