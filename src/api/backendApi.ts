@@ -1,3 +1,6 @@
+import { NFT } from 'opensea-js'
+import { OrderV2 } from 'opensea-js/lib/orders/types'
+
 import { createCleanSerachParams } from '../utils/url.ts'
 
 export namespace BackendApi {
@@ -40,16 +43,24 @@ export namespace BackendApi {
 		slots: { tokenId: string }[]
 	}
 
-	export type ExpertsResponse = Expert[]
+	export type GetExpertsResponse = Expert[]
 
-	export async function getExperts({ filterByTags }: { filterByTags?: string[] } = {}): Promise<ExpertsResponse> {
-		return await request('/expert', { query: { tags: filterByTags } })
+	export async function getExperts({ filterByTags }: { filterByTags?: string[] } = {}) {
+		return await request<GetExpertsResponse>('/expert', { query: { tags: filterByTags } })
 	}
 
 	//
 
+	export interface GetSlotResponse {
+		tokenId: string
+		nft: NFT
+		expert: Expert
+		ask: OrderV2
+		bids: OrderV2[] | null
+	}
+
 	export async function getSlot({ tokenId }: { tokenId: string }) {
-		return await request(`/slot/${tokenId}`)
+		return await request<GetSlotResponse>(`/slot/${tokenId}`)
 	}
 
 	//
@@ -65,8 +76,8 @@ export namespace BackendApi {
 		count: number
 	}
 
-	export async function getTags(): Promise<GetTagsResponse> {
-		return await request('/tag')
+	export async function getTags() {
+		return await request<GetTagsResponse>('/tag')
 	}
 
 	//

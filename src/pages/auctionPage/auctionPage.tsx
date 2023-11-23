@@ -11,15 +11,13 @@ import { ErrorMessage } from '../../components/errorMessage/errorMessage.tsx'
 import { Layout } from '../../components/layout/layout.tsx'
 import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
-import { ReactQueryKey } from '../../global.ts'
+import { DASH, ReactQueryKey } from '../../global.ts'
 import ExternalSvg from '../../icons/external.svg'
 import { invariant } from '../../utils/assert.ts'
-import { DateFormatStyle, formatDate } from '../../utils/date.ts'
-import { formatCryptoAmount, formatFiat } from '../../utils/number.ts'
-import { getBids, getLatestAsk } from '../../utils/opensea.ts'
+import { DateFormatStyle, formatDate, formatDuration } from '../../utils/date.ts'
+import { formatCryptoAmount } from '../../utils/number.ts'
 import { truncateAddress } from '../../utils/string.ts'
 import css from './auctionPage.module.scss'
-import getExperts = BackendApi.getExperts
 
 const FOLDED_HISTORY_SIZE = 3
 
@@ -29,33 +27,20 @@ export function AuctionPage() {
 
 	const cryptoContext = useContext(CryptoContext)
 
-	const auctionQuery = useQuery({
+	const slotQuery = useQuery({
 		queryKey: ReactQueryKey.auction(nftId),
 		queryFn: async () => {
-			const [experts, latestAsk, bids] = await Promise.all([
-				getExperts(),
-				getLatestAsk({ nftId }),
-				getBids({ nftId }),
-			])
-			console.log('experts', experts)
-			console.log('bids', bids)
-
-			const expert = experts.find(expert => expert.slots.some(slot => slot.tokenId === nftId))
-			invariant(expert)
-
-			return {
-				expert,
-				latestAsk,
-				bids,
-			}
+			const slot = await BackendApi.getSlot({ tokenId: nftId })
+			console.log('slot', slot)
+			return slot
 		},
 		staleTime: 60 * 1000,
 	})
 
-	const data = auctionQuery.data
+	const data = slotQuery.data
 
 	const [isHistoryExpanded, setHistoryExpanded] = useState(true)
-	const isHistoryFolded = data && data.bids.orders.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
+	const isHistoryFolded = data?.bids && data.bids.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
 
 	return (
 		<Layout>
@@ -79,7 +64,7 @@ export function AuctionPage() {
 							</div>
 						)}
 
-						{!!data.expert.tags.length && (
+						{!!data.expert.tags?.length && (
 							<div className={css.tags}>
 								<SectionHeader>Expertise</SectionHeader>
 
@@ -99,37 +84,63 @@ export function AuctionPage() {
 
 						<div className={css.bio}>{data.expert.description}</div>
 
-						{data.latestAsk ? (
-							<>
-								<div className={css.info}>
-									<div>
-										<SectionHeader>Current Bid</SectionHeader>
-										<div className={css.infoValue}>3.5 ETH</div>
-										<div className={css.infoSubvalue}>~6481 USD</div>
-									</div>
+						<div className={css.info}>
+							<div>
+								<SectionHeader>Current Bid</SectionHeader>
+								<div className={css.infoValue}>{formatCryptoAmount(data.ask.currentPrice)} ETH</div>
+								<div className={css.infoSubvalue}>
+									~{cryptoContext.getUsdPrice(data.ask.currentPrice)} USD
+								</div>
+							</div>
 
-									<div>
-										<SectionHeader>Ending In</SectionHeader>
-										<div className={css.infoValue}>4 days 3 hours</div>
-										<div className={css.infoSubvalue}>Nov 20, 3:00 PM</div>
+							{data.ask.finalized ? (
+								<div>
+									<SectionHeader>Ended</SectionHeader>
+									<div className={css.infoValue}>
+										{data.ask.closingDate
+											? `${formatDuration(Date.now() - Date.parse(data.ask.closingDate))} ago`
+											: DASH}
+									</div>
+									<div className={css.infoSubvalue}>
+										{data.ask.closingDate
+											? formatDate(data.ask.closingDate, DateFormatStyle.LONG)
+											: DASH}
 									</div>
 								</div>
+							) : (
+								<div>
+									<SectionHeader>Ending In</SectionHeader>
+									<div className={css.infoValue}>
+										{data.ask.closingDate
+											? formatDuration(Date.now() - Date.parse(data.ask.closingDate))
+											: DASH}
+									</div>
+									<div className={css.infoSubvalue}>
+										{data.ask.closingDate
+											? formatDate(data.ask.closingDate, DateFormatStyle.LONG)
+											: DASH}
+									</div>
+								</div>
+							)}
+						</div>
 
-								<Button className={css.bidButton} size={ButtonSize.LARGE}>
-									Place a Bid ►
-								</Button>
+						{data.ask.finalized || (
+							<Button className={css.bidButton} size={ButtonSize.LARGE}>
+								Place a Bid ►
+							</Button>
+						)}
 
-								<div className={clsx(css.history, isHistoryFolded && css.history_folded)}>
-									<SectionHeader>History</SectionHeader>
+						<div className={clsx(css.history, isHistoryFolded && css.history_folded)}>
+							<SectionHeader>History</SectionHeader>
 
+							{data.bids?.length ? (
+								<>
 									<div className={css.historyList}>
-										{data.bids.orders
-											.slice(0, isHistoryFolded ? FOLDED_HISTORY_SIZE : data.bids.orders.length)
+										{data.bids
+											.slice(0, isHistoryFolded ? FOLDED_HISTORY_SIZE : data.bids.length)
 											.map((order, i) => {
 												const amount = formatCryptoAmount(order.currentPrice)
-												const amountUsd = cryptoContext.getUsdPrice(
-													+formatCryptoAmount(order.currentPrice),
-												)
+												const amountUsd = cryptoContext.getUsdPrice(order.currentPrice)
 
 												return (
 													<div key={i} className={css.historyItem}>
@@ -138,7 +149,7 @@ export function AuctionPage() {
 														</div>
 														<div className={css.historyPrice}>
 															{amount} ETH
-															{amountUsd && <div>~{formatFiat(amountUsd)} USD</div>}
+															{amountUsd && <div>~{amountUsd} USD</div>}
 														</div>
 														<div className={css.historyDate} title={order.createdDate}>
 															{formatDate(
@@ -155,14 +166,14 @@ export function AuctionPage() {
 									</div>
 
 									{isHistoryFolded && <a onClick={() => setHistoryExpanded(true)}>Full History ↓</a>}
-								</div>
-							</>
-						) : (
-							<ErrorMessage className={css.errorMessage}>Auction ended 🔥</ErrorMessage>
-						)}
+								</>
+							) : (
+								<ErrorMessage>No bids yet</ErrorMessage>
+							)}
+						</div>
 					</div>
 				</div>
-			) : auctionQuery.isLoading ? (
+			) : slotQuery.isLoading ? (
 				<SpinningLoader />
 			) : (
 				<ErrorMessage>Failed to load auction details 😟</ErrorMessage>

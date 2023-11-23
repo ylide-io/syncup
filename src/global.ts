@@ -1,4 +1,5 @@
 export const NBSP = ' '
+export const DASH = '–'
 
 export const ReactQueryKey = {
 	tags: ['tags'],
