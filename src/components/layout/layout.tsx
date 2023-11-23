@@ -1,10 +1,11 @@
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { PropsWithChildren, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { generatePath, Link } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
-import { RoutePath } from '../../routePath.ts'
+import { FILTER_BY_TAG_PARAM, RoutePath } from '../../routePath.ts'
 import { truncateAddress } from '../../utils/string.ts'
+import { buildUrl } from '../../utils/url.ts'
 import { Button, ButtonLook } from '../button/button.tsx'
 import { SpinningLoader } from '../loaders/loaders.tsx'
 import { TagsContext } from '../tagsContext/tagsContext.tsx'
@@ -21,13 +22,13 @@ export function Layout({ children }: LayoutProps) {
 	return (
 		<div className={css.root}>
 			<div className={css.header}>
-				<a className={css.logo} href={RoutePath.ROOT}>
+				<a className={css.logo} href={generatePath(RoutePath.ROOT)}>
 					<LogoSvg />
 				</a>
 
 				<div className={css.headerRight}>
-					<Link to={RoutePath.ROOT}>Browse Auctions</Link>
-					<Link to={RoutePath.DASHBOARD}>Dashboard</Link>
+					<Link to={generatePath(RoutePath.ROOT)}>Browse Auctions</Link>
+					<Link to={generatePath(RoutePath.DASHBOARD)}>Dashboard</Link>
 
 					{address ? (
 						<Button look={ButtonLook.SECONDARY} onClick={() => void open({ view: 'Account' })}>
@@ -45,7 +46,15 @@ export function Layout({ children }: LayoutProps) {
 				{tagsContext.data ? (
 					<div className={css.footerTags}>
 						{tagsContext.data.items.map(tag => (
-							<a key={tag} href="/">
+							<a
+								key={tag}
+								href={buildUrl({
+									path: generatePath(RoutePath.ROOT),
+									search: {
+										[FILTER_BY_TAG_PARAM]: tag,
+									},
+								})}
+							>
 								{tag}
 							</a>
 						))}

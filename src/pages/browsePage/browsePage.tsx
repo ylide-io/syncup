@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { NFT } from 'opensea-js'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext } from 'react'
+import { generatePath, useSearchParams } from 'react-router-dom'
 
 import { BackendApi } from '../../api/backendApi.ts'
 import { Button, ButtonLook, ButtonSize } from '../../components/button/button.tsx'
@@ -11,19 +12,27 @@ import { Layout } from '../../components/layout/layout.tsx'
 import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { TagsContext } from '../../components/tagsContext/tagsContext.tsx'
 import { ReactQueryKey } from '../../global.ts'
+import { FILTER_BY_TAG_PARAM, RoutePath } from '../../routePath.ts'
 import { getAllNfts, getAsks } from '../../utils/opensea.ts'
+import { buildUrl } from '../../utils/url.ts'
 import { AuctionListItem } from './auctionListItem/auctionListItem.tsx'
 import css from './browsePage.module.scss'
 
 const SIDEBAR_TAG_COUNT = 7
 
 export function BrowsePage() {
+	const [searchParams] = useSearchParams()
+	const filterByTag = searchParams.get(FILTER_BY_TAG_PARAM) || ''
+
 	const tagsContext = useContext(TagsContext)
 
 	const auctionsQuery = useQuery({
-		queryKey: ReactQueryKey.auctions,
+		queryKey: ReactQueryKey.auctions(filterByTag),
 		queryFn: async () => {
-			const [allNfts, experts] = await Promise.all([getAllNfts(), BackendApi.getExperts()])
+			const [allNfts, experts] = await Promise.all([
+				getAllNfts(),
+				BackendApi.getExperts({ filterByTags: filterByTag ? [filterByTag] : undefined }),
+			])
 			const allAsks = await getAsks({ nftIds: allNfts.nfts.map(nft => nft.identifier) })
 
 			return allNfts.nfts.reduce<
@@ -61,7 +70,17 @@ export function BrowsePage() {
 						<>
 							<div className={css.tagList}>
 								{tagsContext.data.items.slice(0, SIDEBAR_TAG_COUNT).map(tag => (
-									<Button key={tag} size={ButtonSize.SMALL} look={ButtonLook.SECONDARY}>
+									<Button
+										key={tag}
+										size={ButtonSize.SMALL}
+										look={ButtonLook.SECONDARY}
+										href={buildUrl({
+											path: generatePath(RoutePath.ROOT),
+											search: {
+												[FILTER_BY_TAG_PARAM]: tag,
+											},
+										})}
+									>
 										{tag}
 									</Button>
 								))}

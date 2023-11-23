@@ -9,7 +9,14 @@ import { DashboardPage } from './pages/dashboardPage/dashboardPage.tsx'
 import { RoutePath } from './routePath.ts'
 import { Web3ModalManager } from './utils/walletconnect.tsx'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: false,
+			refetchOnWindowFocus: false,
+		},
+	},
+})
 
 export function App() {
 	return (

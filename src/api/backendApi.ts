@@ -33,8 +33,8 @@ export namespace BackendApi {
 
 	export type ExpertsResponse = Expert[]
 
-	export async function getExperts(): Promise<ExpertsResponse> {
-		return await request('/expert')
+	export async function getExperts(params?: { filterByTags?: string[] }): Promise<ExpertsResponse> {
+		return await request('/expert', { tags: params?.filterByTags })
 	}
 
 	//
