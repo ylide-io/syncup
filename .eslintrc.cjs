@@ -30,6 +30,8 @@ module.exports = {
 		'@typescript-eslint/restrict-template-expressions': 'off',
 		'@typescript-eslint/no-confusing-void-expression': 'off',
 		'@typescript-eslint/no-unnecessary-condition': 'off',
+		'@typescript-eslint/no-misused-promises': 'off',
+		'@typescript-eslint/no-floating-promises': 'off',
 		'react-refresh/only-export-components': 'off',
 		'react/display-name': 'off',
 		'simple-import-sort/imports': 'warn',

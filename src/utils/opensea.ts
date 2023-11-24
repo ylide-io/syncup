@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { Chain, OpenSeaSDK } from 'opensea-js'
+import { OrderV2 } from 'opensea-js/lib/orders/types'
 
 import { formatAddress } from './string.ts'
 
@@ -84,5 +85,12 @@ export async function createBid(params: { nftId: string }) {
 		},
 		accountAddress,
 		startAmount: 0.001,
+	})
+}
+
+export async function cancelBid(params: { bid: OrderV2 }) {
+	return await openseaSDK.cancelOrder({
+		order: params.bid,
+		accountAddress,
 	})
 }

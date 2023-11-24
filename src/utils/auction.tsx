@@ -1,7 +1,10 @@
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 
+import { BackendApi } from '../api/backendApi.ts'
 import { DASH } from '../global.ts'
+import { invariant } from './assert.ts'
 import { formatDuration } from './date.ts'
+import { createBid } from './opensea.ts'
 
 export function renderAuctionStatus(ask: OrderV2 | undefined) {
 	const duration = ask?.closingDate ? formatDuration(Date.now() - Date.parse(ask?.closingDate)) : undefined
@@ -26,4 +29,14 @@ export function renderAuctionStatus(ask: OrderV2 | undefined) {
 			)}
 		</>
 	)
+}
+
+export async function placeBid({ authToken, tokenId }: { authToken: string; tokenId: string }) {
+	invariant(authToken)
+
+	const bid = await createBid({ nftId: tokenId })
+	console.log('bid', bid)
+
+	const res = await BackendApi.createBid({ bearer: authToken, tokenId, bid })
+	console.log('res', res)
 }

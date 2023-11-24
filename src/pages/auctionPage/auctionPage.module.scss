@@ -188,11 +188,6 @@
 
 	> a {
 		@include expand-click-area;
-		color: var(--secondary-text-color);
-
-		&:hover {
-			color: var(--link-color);
-		}
 	}
 }
 

@@ -1,9 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
+import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 
 import { BackendApi } from '../../api/backendApi.ts'
+import { AuthContext } from '../../components/authContext/authContext.tsx'
 import { Button, ButtonLook, ButtonSize } from '../../components/button/button.tsx'
 import { SectionHeader } from '../../components/components.tsx'
 import { CryptoContext } from '../../components/cryptoContext/cryptoContext.tsx'
@@ -12,10 +15,11 @@ import { Layout } from '../../components/layout/layout.tsx'
 import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
 import { DASH, ReactQueryKey } from '../../global.ts'
-import ExternalSvg from '../../icons/external.svg'
 import { invariant } from '../../utils/assert.ts'
+import { placeBid } from '../../utils/auction.tsx'
 import { DateFormatStyle, formatDate, formatDuration } from '../../utils/date.ts'
 import { formatCryptoAmount } from '../../utils/number.ts'
+import { cancelBid, getUserBids } from '../../utils/opensea.ts'
 import { truncateAddress } from '../../utils/string.ts'
 import css from './auctionPage.module.scss'
 
@@ -26,50 +30,80 @@ export function AuctionPage() {
 	invariant(nftId)
 
 	const cryptoContext = useContext(CryptoContext)
+	const authContext = useContext(AuthContext)
+	const { address } = useAccount()
 
 	const slotQuery = useQuery({
 		queryKey: ReactQueryKey.auction(nftId),
 		queryFn: async () => {
-			const slot = await BackendApi.getSlot({ tokenId: nftId })
+			const [slot, userBids] = await Promise.all([
+				BackendApi.getSlot({ tokenId: nftId }),
+				address ? getUserBids({ address, nftIds: [nftId] }) : null,
+			])
+
 			console.log('slot', slot)
-			return slot
+			console.log('userBids', userBids)
+
+			return { slot, userBids }
 		},
 		staleTime: 60 * 1000,
 	})
 
-	const data = slotQuery.data
+	const { slot, userBids } = slotQuery.data || {}
 
 	const [isHistoryExpanded, setHistoryExpanded] = useState(true)
-	const isHistoryFolded = data?.bids && data.bids.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
+	const isHistoryFolded = slot?.bids && slot.bids.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
+
+	const placeBidMutation = useMutation({
+		mutationFn: async () => {
+			await placeBid({ authToken: authContext.authToken, tokenId: nftId })
+
+			slotQuery.refetch()
+		},
+	})
+
+	const cancelBidMutation = useMutation({
+		mutationFn: async (bid: OrderV2) => {
+			const orderHash = bid.orderHash
+			invariant(orderHash)
+
+			if (!confirm('Are you sure you want to cancel your bid?')) return
+
+			await cancelBid({ bid })
+			await BackendApi.deleteBid({ bearer: authContext.authToken, orderHash })
+
+			slotQuery.refetch()
+		},
+	})
 
 	return (
 		<Layout>
-			{data ? (
+			{slot ? (
 				<div className={css.root}>
 					<div className={css.sidebar}>
-						<ProfilePhoto url={data.expert.imgUrl} />
+						<ProfilePhoto url={slot.expert.imgUrl} />
 
-						{!!(data.expert.position || data.expert.company) && (
+						{!!(slot.expert.position || slot.expert.company) && (
 							<div className={css.position}>
-								<div>{data.expert.position}</div>
-								{data.expert.company}
+								<div>{slot.expert.position}</div>
+								{slot.expert.company}
 							</div>
 						)}
 
-						{!!data.expert.achievements.length && (
+						{!!slot.expert.achievements.length && (
 							<div className={css.achievements}>
-								{data.expert.achievements.map((a, i) => (
+								{slot.expert.achievements.map((a, i) => (
 									<div key={i}>· {a}</div>
 								))}
 							</div>
 						)}
 
-						{!!data.expert.tags?.length && (
+						{!!slot.expert.tags?.length && (
 							<div className={css.tags}>
 								<SectionHeader>Expertise</SectionHeader>
 
 								<div className={css.tagsList}>
-									{data.expert.tags.map(tag => (
+									{slot.expert.tags.map(tag => (
 										<Button key={tag.name} size={ButtonSize.SMALL} look={ButtonLook.SECONDARY}>
 											{tag.name}
 										</Button>
@@ -80,30 +114,30 @@ export function AuctionPage() {
 					</div>
 
 					<div>
-						<h1 className={css.name}>{data.expert.name}</h1>
+						<h1 className={css.name}>{slot.expert.name}</h1>
 
-						<div className={css.bio}>{data.expert.description}</div>
+						<div className={css.bio}>{slot.expert.description}</div>
 
 						<div className={css.info}>
 							<div>
 								<SectionHeader>Current Bid</SectionHeader>
-								<div className={css.infoValue}>{formatCryptoAmount(data.ask.currentPrice)} ETH</div>
+								<div className={css.infoValue}>{formatCryptoAmount(slot.ask.currentPrice)} ETH</div>
 								<div className={css.infoSubvalue}>
-									~{cryptoContext.getUsdPrice(data.ask.currentPrice)} USD
+									~{cryptoContext.getUsdPrice(slot.ask.currentPrice)} USD
 								</div>
 							</div>
 
-							{data.ask.finalized ? (
+							{slot.ask.finalized ? (
 								<div>
 									<SectionHeader>Ended</SectionHeader>
 									<div className={css.infoValue}>
-										{data.ask.closingDate
-											? `${formatDuration(Date.now() - Date.parse(data.ask.closingDate))} ago`
+										{slot.ask.closingDate
+											? `${formatDuration(Date.now() - Date.parse(slot.ask.closingDate))} ago`
 											: DASH}
 									</div>
 									<div className={css.infoSubvalue}>
-										{data.ask.closingDate
-											? formatDate(data.ask.closingDate, DateFormatStyle.LONG)
+										{slot.ask.closingDate
+											? formatDate(slot.ask.closingDate, DateFormatStyle.LONG)
 											: DASH}
 									</div>
 								</div>
@@ -111,21 +145,26 @@ export function AuctionPage() {
 								<div>
 									<SectionHeader>Ending In</SectionHeader>
 									<div className={css.infoValue}>
-										{data.ask.closingDate
-											? formatDuration(Date.now() - Date.parse(data.ask.closingDate))
+										{slot.ask.closingDate
+											? formatDuration(Date.now() - Date.parse(slot.ask.closingDate))
 											: DASH}
 									</div>
 									<div className={css.infoSubvalue}>
-										{data.ask.closingDate
-											? formatDate(data.ask.closingDate, DateFormatStyle.LONG)
+										{slot.ask.closingDate
+											? formatDate(slot.ask.closingDate, DateFormatStyle.LONG)
 											: DASH}
 									</div>
 								</div>
 							)}
 						</div>
 
-						{data.ask.finalized || (
-							<Button className={css.bidButton} size={ButtonSize.LARGE}>
+						{slot.ask.finalized || (
+							<Button
+								className={css.bidButton}
+								size={ButtonSize.LARGE}
+								isLoading={placeBidMutation.isPending}
+								onClick={() => placeBidMutation.mutate()}
+							>
 								Place a Bid ►
 							</Button>
 						)}
@@ -133,12 +172,13 @@ export function AuctionPage() {
 						<div className={clsx(css.history, isHistoryFolded && css.history_folded)}>
 							<SectionHeader>History</SectionHeader>
 
-							{data.bids?.length ? (
+							{slot.bids?.length ? (
 								<>
 									<div className={css.historyList}>
-										{data.bids
-											.slice(0, isHistoryFolded ? FOLDED_HISTORY_SIZE : data.bids.length)
-											.map((order, i) => {
+										{slot.bids
+											.slice(0, isHistoryFolded ? FOLDED_HISTORY_SIZE : slot.bids.length)
+											.map((bid, i) => {
+												const order = bid.data
 												const amount = formatCryptoAmount(order.currentPrice)
 												const amountUsd = cryptoContext.getUsdPrice(order.currentPrice)
 
@@ -155,10 +195,28 @@ export function AuctionPage() {
 															{formatDate(
 																Date.parse(order.createdDate),
 																DateFormatStyle.LONG,
-															)}{' '}
-															<a>
-																<ExternalSvg />
-															</a>
+															)}
+
+															{userBids?.orders.some(
+																b => b.orderHash === bid.orderHash,
+															) && (
+																<>
+																	{' · '}
+
+																	{cancelBidMutation.isPending &&
+																	cancelBidMutation.variables === bid.data ? (
+																		'Loading...'
+																	) : (
+																		<a
+																			onClick={() =>
+																				cancelBidMutation.mutate(bid.data)
+																			}
+																		>
+																			Cancel
+																		</a>
+																	)}
+																</>
+															)}
 														</div>
 													</div>
 												)

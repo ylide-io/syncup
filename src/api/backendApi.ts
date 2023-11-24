@@ -26,7 +26,13 @@ export namespace BackendApi {
 			},
 		)
 
-		return (await response.json()) as Data
+		const body = await response.text()
+
+		try {
+			return JSON.parse(body) as Data
+		} catch (e) {
+			return body as Data
+		}
 	}
 
 	//
@@ -73,12 +79,18 @@ export namespace BackendApi {
 
 	//
 
+	export interface GetSlotBidItem {
+		data: OrderV2
+		ethAmount: string
+		orderHash: string
+	}
+
 	export interface GetSlotResponse {
 		tokenId: string
 		nft: NFT
 		expert: Expert
 		ask: OrderV2
-		bids: OrderV2[] | null
+		bids: GetSlotBidItem[] | null
 	}
 
 	export async function getSlot({ tokenId }: { tokenId: string }) {
@@ -104,14 +116,14 @@ export namespace BackendApi {
 
 	//
 
-	export async function createBid({ bearer, tokenId }: { bearer: string; tokenId: string }) {
-		return await request('/bid', { bearer, data: { tokenId } })
+	export async function createBid({ bearer, tokenId, bid }: { bearer: string; tokenId: string; bid: OrderV2 }) {
+		return await request('/bid', { bearer, data: { tokenId, order: bid } })
 	}
 
 	//
 
-	export async function deleteBid({ bearer, tokenId }: { bearer: string; tokenId: string }) {
-		return await request('/bid', { method: 'DELETE', bearer, data: { tokenId } })
+	export async function deleteBid({ bearer, orderHash }: { bearer: string; orderHash: string }) {
+		return await request('/bid', { method: 'DELETE', bearer, data: { orderHash } })
 	}
 
 	//
