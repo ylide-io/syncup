@@ -65,7 +65,8 @@ export function formatDuration(ms: number) {
 		hr: Math.floor(ms / 3600000) % 24,
 		min: Math.floor(ms / 60000) % 60,
 	})
-		.filter(val => val[1] !== 0)
+		.filter(val => val[1] > 0)
+		.slice(0, 2)
 		.map(([key, val]) => `${val} ${key}${val !== 1 ? 's' : ''}`)
 		.join(' ')
 }

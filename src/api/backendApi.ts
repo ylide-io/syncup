@@ -128,27 +128,25 @@ export namespace BackendApi {
 
 	//
 
-	// export interface SecretLink {
-	// 	id: string;
-	// 	url: string;
-	// }
-	//
-	// export interface getUserItem {
-	// 	orderHash: string
-	// 	ethAmount: string
-	// 	slot: {
-	// 		tokenId: string;
-	// 		expert: Expert;
-	// 		link: SecretLink;
-	// 		nft: NFT;
-	// 		ask: OrderV2;
-	// 		bids: BidEntity[];
-	// 	}
-	// 	user: UserEntity
-	// 	data: OrderV2
-	// }
+	export interface SecretLink {
+		id: string
+		url: string
+	}
+
+	export interface getUserItem {
+		data: OrderV2
+		orderHash: string
+		ethAmount: string
+		slot: {
+			tokenId: string
+			expert: Expert
+			link: SecretLink | null
+			nft: NFT
+			ask: OrderV2
+		}
+	}
 
 	export async function getUser({ bearer }: { bearer: string }) {
-		return await request('/user', { bearer })
+		return await request<getUserItem[]>('/user', { bearer })
 	}
 }

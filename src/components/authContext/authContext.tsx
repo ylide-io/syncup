@@ -6,6 +6,8 @@ import { invariant } from '../../utils/assert.ts'
 import { BroswerStorageContext } from '../browserStorageContext/browserStorageContext.tsx'
 
 export interface AuthContextApi {
+	address: string | undefined
+
 	authToken: string | ''
 	createAuthToken: () => Promise<string | ''>
 }
@@ -20,6 +22,8 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
 
 	const api = useMemo<AuthContextApi>(
 		() => ({
+			address,
+
 			authToken,
 			createAuthToken: async () => {
 				try {
