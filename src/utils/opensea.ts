@@ -1,6 +1,8 @@
 import { ethers } from 'ethers'
 import { Chain, OpenSeaSDK } from 'opensea-js'
 
+import { formatAddress } from './string.ts'
+
 const collectionSlug = 'syncdup'
 const openseaApiKey = 'adc798f1e94a41e4900e36815295371b'
 const tokenAddress = '0x965a10b66e4ae91f0d87dd5628e6276741c3e15f'
@@ -68,7 +70,7 @@ export async function getBids(params: { nftId: string }) {
 export async function getUserBids(params: { address: string; nftIds: string[] }) {
 	return await openseaSDK.api.getOrders({
 		side: 'bid',
-		maker: params.address.toLowerCase(),
+		maker: formatAddress(params.address),
 		assetContractAddress: tokenAddress,
 		tokenIds: params.nftIds,
 	})

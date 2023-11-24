@@ -1,6 +1,7 @@
 import { NFT } from 'opensea-js'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 
+import { formatAddress } from '../utils/string.ts'
 import { createCleanSerachParams } from '../utils/url.ts'
 
 export namespace BackendApi {
@@ -31,13 +32,13 @@ export namespace BackendApi {
 	//
 
 	export async function getAuthNonce({ address }: { address: string }) {
-		return await request<{ nonce: string }>('/auth/nonce', { query: { address: address.toLowerCase() } })
+		return await request<{ nonce: string }>('/auth/nonce', { query: { address: formatAddress(address) } })
 	}
 
 	//
 
 	export async function getAuthToken({ address, signature }: { address: string; signature: string }) {
-		return await request<{ token: string }>('/auth', { data: { address: address.toLowerCase(), signature } })
+		return await request<{ token: string }>('/auth', { data: { address: formatAddress(address), signature } })
 	}
 
 	//
@@ -114,6 +115,26 @@ export namespace BackendApi {
 	}
 
 	//
+
+	// export interface SecretLink {
+	// 	id: string;
+	// 	url: string;
+	// }
+	//
+	// export interface getUserItem {
+	// 	orderHash: string
+	// 	ethAmount: string
+	// 	slot: {
+	// 		tokenId: string;
+	// 		expert: Expert;
+	// 		link: SecretLink;
+	// 		nft: NFT;
+	// 		ask: OrderV2;
+	// 		bids: BidEntity[];
+	// 	}
+	// 	user: UserEntity
+	// 	data: OrderV2
+	// }
 
 	export async function getUser({ bearer }: { bearer: string }) {
 		return await request('/user', { bearer })

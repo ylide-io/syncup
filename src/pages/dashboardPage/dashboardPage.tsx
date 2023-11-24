@@ -1,29 +1,24 @@
 import { useQuery } from '@tanstack/react-query'
-import { useAccount } from 'wagmi'
+import { useContext } from 'react'
 
+import { BackendApi } from '../../api/backendApi.ts'
+import { AuthContext } from '../../components/authContext/authContext.tsx'
 import { SectionHeader } from '../../components/components.tsx'
 import { Layout } from '../../components/layout/layout.tsx'
-import { invariant } from '../../utils/assert.ts'
-import { getAllNfts, getUserBids } from '../../utils/opensea.ts'
+import { ReactQueryKey } from '../../global.ts'
 import css from './dashboardPage.module.scss'
 import { MyAuction } from './myAuction/myAuction.tsx'
 
 export function DashboardPage() {
-	const { address } = useAccount()
+	const { authToken } = useContext(AuthContext)
 
-	const userBidsQuery = useQuery({
-		enabled: !!address,
-		queryKey: ['bids', 'user', address],
+	const userQuery = useQuery({
+		enabled: !!authToken,
+		queryKey: ReactQueryKey.user(authToken),
 		queryFn: async () => {
-			invariant(address)
-			const allNfts = await getAllNfts()
-			const bids = await getUserBids({
-				address: '0x37d524c92b46277d9167fe936e45baa4f0568a73',
-				nftIds: allNfts.nfts.map(nft => nft.identifier),
-			})
-			console.log('allNfts', allNfts)
-			console.log('bids', bids)
-			return bids
+			const user = await BackendApi.getUser({ bearer: authToken })
+			console.log('user', user)
+			return user
 		},
 	})
 

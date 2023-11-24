@@ -19,6 +19,7 @@ module.exports = {
 	},
 	plugins: ['react-refresh', 'simple-import-sort'],
 	rules: {
+		'no-empty': 'off',
 		'no-inner-declarations': 'off',
 		'no-mixed-spaces-and-tabs': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',

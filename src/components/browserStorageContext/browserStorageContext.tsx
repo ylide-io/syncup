@@ -1,5 +1,7 @@
 import { createContext, PropsWithChildren, useMemo, useState } from 'react'
 
+import { formatAddress } from '../../utils/string.ts'
+
 export enum BroswerStorageKey {
 	AUTH_TOKEN = 'syncdup__auth_token',
 }
@@ -20,8 +22,8 @@ function setJsonItem(key: BroswerStorageKey, value: any, storage: Storage = loca
 //
 
 export interface BroswerStorageContextApi {
-	getAuthToken: (address: string) => string
-	setAuthToken: (address: string, token: string) => void
+	getAuthToken: (address: string) => string | ''
+	setAuthToken: (address: string, token: string | '') => void
 }
 
 export const BroswerStorageContext = createContext({} as BroswerStorageContextApi)
@@ -32,10 +34,10 @@ export function BroswerStorageContextProvider({ children }: PropsWithChildren) {
 	const api = useMemo<BroswerStorageContextApi>(
 		() => ({
 			getAuthToken: address =>
-				getJsonItem<Record<string, string>>(BroswerStorageKey.AUTH_TOKEN)?.[address.toLowerCase()] || '',
+				getJsonItem<Record<string, string>>(BroswerStorageKey.AUTH_TOKEN)?.[formatAddress(address)] || '',
 			setAuthToken: (address, token) => {
 				const value = getJsonItem<Record<string, string>>(BroswerStorageKey.AUTH_TOKEN) || {}
-				setJsonItem(BroswerStorageKey.AUTH_TOKEN, { ...value, [address.toLowerCase()]: token })
+				setJsonItem(BroswerStorageKey.AUTH_TOKEN, { ...value, [formatAddress(address)]: token })
 				setUpdateCounter(updateCounter + 1)
 			},
 		}),
