@@ -63,6 +63,10 @@ export function AuctionPage() {
 
 			slotQuery.refetch()
 		},
+		onError: e => {
+			console.log(e)
+			alert(['Failed to create a bid', e.message].filter(Boolean).join('\n\n'))
+		},
 	})
 
 	const cancelBidMutation = useMutation({
