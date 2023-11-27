@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { generatePath } from 'react-router-dom'
 
@@ -14,10 +15,11 @@ export interface MyAuctionProps {
 	tokenId: string
 	ask: OrderV2
 	expert: Expert
+	currentPrice: BigNumber
 	secretLink: BackendApi.SecretLink | null
 }
 
-export function MyAuction({ tokenId, ask, expert, secretLink }: MyAuctionProps) {
+export function MyAuction({ tokenId, ask, expert, currentPrice, secretLink }: MyAuctionProps) {
 	return (
 		<div className={css.root}>
 			<ProfilePhoto className={css.profilePhoto} url={expert.imgUrl} />
@@ -26,7 +28,7 @@ export function MyAuction({ tokenId, ask, expert, secretLink }: MyAuctionProps) 
 				<div className={css.name}>{expert.name}</div>
 
 				<div>
-					Current bid is <b>{formatCryptoAmount(ask.currentPrice)} ETH</b>
+					Current bid is <b>{formatCryptoAmount(currentPrice)} ETH</b>
 				</div>
 
 				{secretLink && (

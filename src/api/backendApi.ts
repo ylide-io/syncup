@@ -133,7 +133,7 @@ export namespace BackendApi {
 		url: string
 	}
 
-	export interface getUserItem {
+	export interface GetUserItem {
 		data: OrderV2
 		orderHash: string
 		ethAmount: string
@@ -147,6 +147,6 @@ export namespace BackendApi {
 	}
 
 	export async function getUser({ bearer }: { bearer: string }) {
-		return await request<getUserItem[]>('/user', { bearer })
+		return await request<GetUserItem[]>('/user', { bearer })
 	}
 }

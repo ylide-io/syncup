@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { BigNumber } from 'ethers'
 import { useContext } from 'react'
 
 import { BackendApi } from '../../api/backendApi.ts'
@@ -27,12 +28,12 @@ export function DashboardPage() {
 	const activeAuctions = userQuery.data
 		?.filter(item => !item.data.finalized)
 		// filter out duplicates
-		.filter((auction, i, arr) => arr.findIndex(it => it.slot.tokenId === auction.slot.tokenId) !== i)
+		.filter((auction, i, arr) => arr.findIndex(it => it.slot.tokenId === auction.slot.tokenId) === i)
 
 	const pastAuctions = userQuery.data
 		?.filter(item => item.data.finalized)
 		// filter out duplicates
-		.filter((auction, i, arr) => arr.findIndex(it => it.slot.tokenId === auction.slot.tokenId) !== i)
+		.filter((auction, i, arr) => arr.findIndex(it => it.slot.tokenId === auction.slot.tokenId) === i)
 
 	return (
 		<Layout>
@@ -51,6 +52,7 @@ export function DashboardPage() {
 										tokenId={auction.slot.tokenId}
 										ask={auction.data}
 										expert={auction.slot.expert}
+										currentPrice={BigNumber.from(auction.ethAmount)}
 										secretLink={auction.slot.link}
 									/>
 								))
@@ -69,6 +71,7 @@ export function DashboardPage() {
 										tokenId={auction.slot.tokenId}
 										ask={auction.data}
 										expert={auction.slot.expert}
+										currentPrice={BigNumber.from(auction.ethAmount)}
 										secretLink={auction.slot.link}
 									/>
 								))
