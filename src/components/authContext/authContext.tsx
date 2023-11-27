@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from 'react'
 import { useAccount, useSignMessage } from 'wagmi'
 
 import { BackendApi } from '../../api/backendApi.ts'
@@ -20,41 +20,49 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
 	const { signMessageAsync } = useSignMessage()
 	const authToken = (address && storageContextApi.getAuthToken(address)) || ''
 
+	const createAuthToken = useCallback(async () => {
+		try {
+			invariant(address)
+
+			if (authToken) {
+				return authToken
+			}
+
+			const { nonce } = await BackendApi.getAuthNonce({ address: address })
+			console.log('nonce', nonce)
+			invariant(nonce)
+
+			const signature = await signMessageAsync({ message: nonce })
+			console.log('signature', signature)
+			invariant(signature)
+
+			const { token } = await BackendApi.getAuthToken({ address: address, signature })
+			console.log('token', token)
+			invariant(token)
+
+			storageContextApi.setAuthToken(address, token)
+
+			return token
+		} catch (e) {
+			return ''
+		}
+	}, [address, authToken, signMessageAsync, storageContextApi])
+
 	const api = useMemo<AuthContextApi>(
 		() => ({
 			address,
 
 			authToken,
-			createAuthToken: async () => {
-				try {
-					invariant(address)
-
-					if (authToken) {
-						return authToken
-					}
-
-					const { nonce } = await BackendApi.getAuthNonce({ address: address })
-					console.log('nonce', nonce)
-					invariant(nonce)
-
-					const signature = await signMessageAsync({ message: nonce })
-					console.log('signature', signature)
-					invariant(signature)
-
-					const { token } = await BackendApi.getAuthToken({ address: address, signature })
-					console.log('token', token)
-					invariant(token)
-
-					storageContextApi.setAuthToken(address, token)
-
-					return token
-				} catch (e) {
-					return ''
-				}
-			},
+			createAuthToken,
 		}),
-		[address, authToken, signMessageAsync, storageContextApi],
+		[address, authToken, createAuthToken],
 	)
+
+	useEffect(() => {
+		if (address && !authToken) {
+			createAuthToken()
+		}
+	}, [address, authToken, createAuthToken])
 
 	return <AuthContext.Provider value={api}>{children}</AuthContext.Provider>
 }
