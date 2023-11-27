@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { BigNumber, utils } from 'ethers'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { generatePath, useParams } from 'react-router-dom'
 
 import { BackendApi } from '../../api/backendApi.ts'
 import { AuthContext } from '../../components/authContext/authContext.tsx'
@@ -16,12 +16,14 @@ import { Layout } from '../../components/layout/layout.tsx'
 import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
 import { DASH, ReactQueryKey } from '../../global.ts'
+import { FILTER_BY_TAG_PARAM, RoutePath } from '../../routePath.ts'
 import { invariant } from '../../utils/assert.ts'
 import { getCurrentPrice, getHighestBidPrice, placeBid } from '../../utils/auction.tsx'
 import { DateFormatStyle, formatDate, formatDuration } from '../../utils/date.ts'
 import { formatCryptoAmount } from '../../utils/number.ts'
 import { cancelBid, getUserBids } from '../../utils/opensea.ts'
 import { truncateAddress } from '../../utils/string.ts'
+import { buildUrl } from '../../utils/url.ts'
 import css from './auctionPage.module.scss'
 
 const FOLDED_HISTORY_SIZE = 3
@@ -123,7 +125,17 @@ export function AuctionPage() {
 
 								<div className={css.tagsList}>
 									{slot.expert.tags.map(tag => (
-										<Button key={tag.name} size={ButtonSize.SMALL} look={ButtonLook.SECONDARY}>
+										<Button
+											key={tag.name}
+											size={ButtonSize.SMALL}
+											look={ButtonLook.SECONDARY}
+											href={buildUrl({
+												path: generatePath(RoutePath.ROOT),
+												search: {
+													[FILTER_BY_TAG_PARAM]: tag.name,
+												},
+											})}
+										>
 											{tag.name}
 										</Button>
 									))}
