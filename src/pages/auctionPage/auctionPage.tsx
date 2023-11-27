@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import clsx from 'clsx'
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -19,7 +19,7 @@ import { DASH, ReactQueryKey } from '../../global.ts'
 import { invariant } from '../../utils/assert.ts'
 import { getCurrentPrice, getHighestBidPrice, placeBid } from '../../utils/auction.tsx'
 import { DateFormatStyle, formatDate, formatDuration } from '../../utils/date.ts'
-import { formatCryptoAmount, multiplyBigNumber } from '../../utils/number.ts'
+import { formatCryptoAmount } from '../../utils/number.ts'
 import { cancelBid, getUserBids } from '../../utils/opensea.ts'
 import { truncateAddress } from '../../utils/string.ts'
 import css from './auctionPage.module.scss'
@@ -60,15 +60,17 @@ export function AuctionPage() {
 	const [isHistoryExpanded, setHistoryExpanded] = useState(true)
 	const isHistoryFolded = slot?.bids && slot.bids.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
 
+	const nextPrice =
+		(highestBidPrice && BigNumber.from(highestBidPrice).add(utils.parseUnits('0.0001', 18))) ||
+		currentPrice ||
+		utils.parseUnits('0.001', 18)
+
 	const placeBidMutation = useMutation({
 		mutationFn: async () => {
 			await placeBid({
 				authToken,
 				tokenId: nftId,
-				price:
-					(highestBidPrice && multiplyBigNumber(highestBidPrice, 1.2)) ||
-					currentPrice ||
-					utils.parseUnits('0.0001', 18),
+				price: nextPrice,
 			})
 
 			slotQuery.refetch()
@@ -186,7 +188,7 @@ export function AuctionPage() {
 										isLoading={placeBidMutation.isPending}
 										onClick={() => placeBidMutation.mutate()}
 									>
-										Place a Bid ►
+										Place a Bid / {formatCryptoAmount(nextPrice)} ETH ►
 									</Button>
 								) : (
 									<Button
