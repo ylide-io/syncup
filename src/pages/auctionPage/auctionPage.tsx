@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import clsx from 'clsx'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useAccount } from 'wagmi'
 
 import { BackendApi } from '../../api/backendApi.ts'
 import { AuthContext } from '../../components/authContext/authContext.tsx'
@@ -30,8 +30,8 @@ export function AuctionPage() {
 	invariant(nftId)
 
 	const cryptoContext = useContext(CryptoContext)
-	const authContext = useContext(AuthContext)
-	const { address } = useAccount()
+	const { address, authToken, createAuthToken } = useContext(AuthContext)
+	const { open } = useWeb3Modal()
 
 	const slotQuery = useQuery({
 		queryKey: ReactQueryKey.auction(nftId, address),
@@ -59,7 +59,7 @@ export function AuctionPage() {
 
 	const placeBidMutation = useMutation({
 		mutationFn: async () => {
-			await placeBid({ authToken: authContext.authToken, tokenId: nftId })
+			await placeBid({ authToken, tokenId: nftId })
 
 			slotQuery.refetch()
 		},
@@ -73,7 +73,7 @@ export function AuctionPage() {
 			if (!confirm('Are you sure you want to cancel your bid?')) return
 
 			await cancelBid({ bid })
-			await BackendApi.deleteBid({ bearer: authContext.authToken, orderHash })
+			await BackendApi.deleteBid({ bearer: authToken, orderHash })
 
 			slotQuery.refetch()
 		},
@@ -164,14 +164,27 @@ export function AuctionPage() {
 						</div>
 
 						{slot.ask.finalized || (
-							<Button
-								className={css.bidButton}
-								size={ButtonSize.LARGE}
-								isLoading={placeBidMutation.isPending}
-								onClick={() => placeBidMutation.mutate()}
-							>
-								Place a Bid ►
-							</Button>
+							<>
+								{authToken ? (
+									<Button
+										className={css.bidButton}
+										size={ButtonSize.LARGE}
+										isLoading={placeBidMutation.isPending}
+										onClick={() => placeBidMutation.mutate()}
+									>
+										Place a Bid ►
+									</Button>
+								) : (
+									<Button
+										className={css.bidButton}
+										size={ButtonSize.LARGE}
+										isLoading={placeBidMutation.isPending}
+										onClick={() => (address ? createAuthToken() : open())}
+									>
+										Sign Up to Place a Bid
+									</Button>
+								)}
+							</>
 						)}
 
 						<div className={clsx(css.history, isHistoryFolded && css.history_folded)}>
