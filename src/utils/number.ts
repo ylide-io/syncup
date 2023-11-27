@@ -1,8 +1,8 @@
-import { BigNumber, utils } from 'ethers'
+import { BigNumber, BigNumberish, utils } from 'ethers'
 
 const LOCALE = 'en-US'
 
-export function formatCryptoAmount(value: BigNumber) {
+export function formatCryptoAmount(value: BigNumberish) {
 	return utils.formatUnits(value, 18)
 }
 
@@ -16,6 +16,6 @@ export function formatFiat(value: number) {
 	return usdFormat.format(value)
 }
 
-export function compareBigNumbers(a: BigNumber, b: BigNumber) {
-	return a.gt(b) ? 1 : a.lt(b) ? -1 : 0
+export function compareBigNumbers(a: BigNumberish, b: BigNumberish) {
+	return BigNumber.from(a).gt(BigNumber.from(b)) ? 1 : BigNumber.from(a).lt(BigNumber.from(b)) ? -1 : 0
 }

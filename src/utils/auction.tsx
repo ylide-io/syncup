@@ -33,7 +33,7 @@ export function renderAuctionStatus(ask: OrderV2 | undefined) {
 }
 
 export function getCurrentPrice(ask: OrderV2, bids?: OrderV2[] | null) {
-	const price = bids?.sort((a, b) => -compareBigNumbers(a.currentPrice, b.currentPrice))[0].currentPrice
+	const price = bids?.sort((a, b) => -compareBigNumbers(a.currentPrice, b.currentPrice))[0]?.currentPrice
 	return price || ask.currentPrice
 }
 

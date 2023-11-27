@@ -41,10 +41,13 @@ export function AuctionPage() {
 				address ? getUserBids({ address, nftIds: [nftId] }) : null,
 			])
 
+			const currentPrice = getCurrentPrice(slot.ask, slot.bids?.map(b => b.data))
+
 			console.log('slot', slot)
 			console.log('userBids', userBids)
+			console.log('currentPrice', currentPrice)
 
-			return { slot, userBids, currentPrice: getCurrentPrice(slot.ask, slot.bids?.map(b => b.data)) }
+			return { slot, userBids, currentPrice }
 		},
 		staleTime: 60 * 1000,
 	})
