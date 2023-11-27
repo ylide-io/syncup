@@ -34,7 +34,7 @@ export function AuctionPage() {
 	const { address } = useAccount()
 
 	const slotQuery = useQuery({
-		queryKey: ReactQueryKey.auction(nftId),
+		queryKey: ReactQueryKey.auction(nftId, address),
 		queryFn: async () => {
 			const [slot, userBids] = await Promise.all([
 				BackendApi.getSlot({ tokenId: nftId }),
