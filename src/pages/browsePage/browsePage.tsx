@@ -51,7 +51,7 @@ export function BrowsePage() {
 									<Button
 										key={tag}
 										size={ButtonSize.SMALL}
-										look={ButtonLook.SECONDARY}
+										look={tag === filterByTag ? ButtonLook.PRIMARY : ButtonLook.SECONDARY}
 										href={buildUrl({
 											path: generatePath(RoutePath.ROOT),
 											search: {
