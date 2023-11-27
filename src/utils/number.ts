@@ -19,3 +19,19 @@ export function formatFiat(value: number) {
 export function compareBigNumbers(a: BigNumberish, b: BigNumberish) {
 	return BigNumber.from(a).gt(BigNumber.from(b)) ? 1 : BigNumber.from(a).lt(BigNumber.from(b)) ? -1 : 0
 }
+
+const oneBN: BigNumber = utils.parseUnits('1', 18)
+
+export function multiplyBigNumber(bn: BigNumberish, number: number): BigNumber {
+	const bnForSure = BigNumber.from(bn)
+	const numberBN = utils.parseUnits(number.toString(), 18)
+
+	return bnForSure.mul(numberBN).div(oneBN)
+}
+
+export function divideBigNumber(bn: BigNumberish, number: number): BigNumber {
+	const bnForSure = BigNumber.from(bn)
+	const numberBN = utils.parseUnits(number.toString(), 18)
+
+	return bnForSure.div(numberBN).div(oneBN)
+}

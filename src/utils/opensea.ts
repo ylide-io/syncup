@@ -1,7 +1,8 @@
-import { ethers } from 'ethers'
+import { BigNumberish, ethers } from 'ethers'
 import { Chain, OpenSeaSDK } from 'opensea-js'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 
+import { formatCryptoAmount } from './number.ts'
 import { formatAddress } from './string.ts'
 
 const collectionSlug = 'syncdup'
@@ -94,15 +95,15 @@ export async function getUserBids(params: { address: string; nftIds: string[] })
 	)
 }
 
-export async function createBid(params: { nftId: string }) {
+export async function createBid({ nftId, price }: { nftId: string; price: BigNumberish }) {
 	return await getOpenSeaSDK((openseaSDK, accountAddress) =>
 		openseaSDK.createOffer({
 			asset: {
-				tokenId: params.nftId,
+				tokenId: nftId,
 				tokenAddress,
 			},
 			accountAddress,
-			startAmount: 0.001,
+			startAmount: +formatCryptoAmount(price),
 		}),
 	)
 }

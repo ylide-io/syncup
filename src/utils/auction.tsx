@@ -1,3 +1,4 @@
+import { BigNumberish } from 'ethers'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 
 import { BackendApi } from '../api/backendApi.ts'
@@ -32,15 +33,26 @@ export function renderAuctionStatus(ask: OrderV2 | undefined) {
 	)
 }
 
-export function getCurrentPrice(ask: OrderV2, bids?: OrderV2[] | null) {
-	const price = bids?.sort((a, b) => -compareBigNumbers(a.currentPrice, b.currentPrice))[0]?.currentPrice
-	return price || ask.currentPrice
+export function getHighestBidPrice(bids?: OrderV2[] | null) {
+	return bids?.sort((a, b) => -compareBigNumbers(a.currentPrice, b.currentPrice))[0]?.currentPrice
 }
 
-export async function placeBid({ authToken, tokenId }: { authToken: string; tokenId: string }) {
+export function getCurrentPrice(ask: OrderV2, bids?: OrderV2[] | null) {
+	return getHighestBidPrice(bids) || ask.currentPrice
+}
+
+export async function placeBid({
+	authToken,
+	tokenId,
+	price,
+}: {
+	authToken: string
+	tokenId: string
+	price: BigNumberish
+}) {
 	invariant(authToken)
 
-	const bid = await createBid({ nftId: tokenId })
+	const bid = await createBid({ nftId: tokenId, price })
 	console.log('bid', bid)
 
 	const res = await BackendApi.createBid({ bearer: authToken, tokenId, bid })
