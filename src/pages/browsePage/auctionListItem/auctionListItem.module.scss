@@ -32,8 +32,14 @@
 }
 
 .name {
+	color: var(--text-color);
 	font-size: 36px;
 	font-weight: var(--semi-bold-font-weight);
+
+	&:hover {
+		color: var(--accent-color);
+		text-decoration: none;
+	}
 }
 
 .bio {

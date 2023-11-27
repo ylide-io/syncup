@@ -1,6 +1,6 @@
 import { NFT } from 'opensea-js'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
-import { generatePath } from 'react-router-dom'
+import { generatePath, Link } from 'react-router-dom'
 
 import { BackendApi } from '../../../api/backendApi.ts'
 import { Button } from '../../../components/button/button.tsx'
@@ -18,10 +18,14 @@ export interface AuctionListItemProps {
 export function AuctionListItem({ nft, ask, expert }: AuctionListItemProps) {
 	return (
 		<div className={css.root}>
-			<ProfilePhoto className={css.profilePhoto} url={expert.imgUrl} />
+			<Link className={css.profilePhoto} to={generatePath(RoutePath.AUCTION, { nftId: nft.identifier })}>
+				<ProfilePhoto url={expert.imgUrl} />
+			</Link>
 
 			<div className={css.details}>
-				<div className={css.name}>{expert.name}</div>
+				<Link className={css.name} to={generatePath(RoutePath.AUCTION, { nftId: nft.identifier })}>
+					{expert.name}
+				</Link>
 
 				{!!(expert.position || expert.company) && (
 					<div>{[expert.position, expert.company].filter(Boolean).join('  ·  ')}</div>
