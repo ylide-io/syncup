@@ -15,3 +15,7 @@ export const usdFormat = new Intl.NumberFormat(LOCALE, {
 export function formatFiat(value: number) {
 	return usdFormat.format(value)
 }
+
+export function compareBigNumbers(a: BigNumber, b: BigNumber) {
+	return a.gt(b) ? 1 : a.lt(b) ? -1 : 0
+}

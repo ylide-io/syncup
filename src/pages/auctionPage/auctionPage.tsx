@@ -16,7 +16,7 @@ import { SpinningLoader } from '../../components/loaders/loaders.tsx'
 import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
 import { DASH, ReactQueryKey } from '../../global.ts'
 import { invariant } from '../../utils/assert.ts'
-import { placeBid } from '../../utils/auction.tsx'
+import { getCurrentPrice, placeBid } from '../../utils/auction.tsx'
 import { DateFormatStyle, formatDate, formatDuration } from '../../utils/date.ts'
 import { formatCryptoAmount } from '../../utils/number.ts'
 import { cancelBid, getUserBids } from '../../utils/opensea.ts'
@@ -44,12 +44,12 @@ export function AuctionPage() {
 			console.log('slot', slot)
 			console.log('userBids', userBids)
 
-			return { slot, userBids }
+			return { slot, userBids, currentPrice: getCurrentPrice(slot.ask, slot.bids?.map(b => b.data)) }
 		},
 		staleTime: 60 * 1000,
 	})
 
-	const { slot, userBids } = slotQuery.data || {}
+	const { slot, userBids, currentPrice } = slotQuery.data || {}
 
 	const [isHistoryExpanded, setHistoryExpanded] = useState(true)
 	const isHistoryFolded = slot?.bids && slot.bids.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
@@ -119,13 +119,15 @@ export function AuctionPage() {
 						<div className={css.bio}>{slot.expert.description}</div>
 
 						<div className={css.info}>
-							<div>
-								<SectionHeader>Current Bid</SectionHeader>
-								<div className={css.infoValue}>{formatCryptoAmount(slot.ask.currentPrice)} ETH</div>
-								<div className={css.infoSubvalue}>
-									~{cryptoContext.getUsdPrice(slot.ask.currentPrice)} USD
+							{currentPrice && (
+								<div>
+									<SectionHeader>Current Bid</SectionHeader>
+									<div className={css.infoValue}>{formatCryptoAmount(currentPrice)} ETH</div>
+									<div className={css.infoSubvalue}>
+										~{cryptoContext.getUsdPrice(currentPrice)} USD
+									</div>
 								</div>
-							</div>
+							)}
 
 							{slot.ask.finalized ? (
 								<div>

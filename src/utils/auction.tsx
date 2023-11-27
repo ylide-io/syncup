@@ -4,6 +4,7 @@ import { BackendApi } from '../api/backendApi.ts'
 import { DASH } from '../global.ts'
 import { invariant } from './assert.ts'
 import { formatDuration } from './date.ts'
+import { compareBigNumbers } from './number.ts'
 import { createBid } from './opensea.ts'
 
 export function renderAuctionStatus(ask: OrderV2 | undefined) {
@@ -29,6 +30,11 @@ export function renderAuctionStatus(ask: OrderV2 | undefined) {
 			)}
 		</>
 	)
+}
+
+export function getCurrentPrice(ask: OrderV2, bids?: OrderV2[] | null) {
+	const price = bids?.sort((a, b) => -compareBigNumbers(a.currentPrice, b.currentPrice))[0].currentPrice
+	return price || ask.currentPrice
 }
 
 export async function placeBid({ authToken, tokenId }: { authToken: string; tokenId: string }) {
