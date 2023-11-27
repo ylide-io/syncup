@@ -51,21 +51,27 @@ export function BrowsePage() {
 							<div className={css.tagList}>
 								{tagsContext.data.items
 									.slice(0, tagsCollapsed ? SIDEBAR_TAG_COUNT : tagsContext.data.items.length)
-									.map(tag => (
-										<Button
-											key={tag}
-											size={ButtonSize.SMALL}
-											look={tag === filterByTag ? ButtonLook.PRIMARY : ButtonLook.SECONDARY}
-											href={buildUrl({
-												path: generatePath(RoutePath.ROOT),
-												search: {
-													[FILTER_BY_TAG_PARAM]: tag,
-												},
-											})}
-										>
-											{tag}
-										</Button>
-									))}
+									.map(tag => {
+										const isActive = tag === filterByTag
+
+										return (
+											<Button
+												key={tag}
+												size={ButtonSize.SMALL}
+												look={isActive ? ButtonLook.PRIMARY : ButtonLook.SECONDARY}
+												href={buildUrl({
+													path: generatePath(RoutePath.ROOT),
+													search: isActive
+														? {}
+														: {
+																[FILTER_BY_TAG_PARAM]: tag,
+														  },
+												})}
+											>
+												{tag}
+											</Button>
+										)
+									})}
 							</div>
 
 							{tagsCollapsed && tagsContext.data.items.length > SIDEBAR_TAG_COUNT && (
