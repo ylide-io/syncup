@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { generatePath, useSearchParams } from 'react-router-dom'
 
 import { BackendApi } from '../../api/backendApi.ts'
@@ -38,6 +38,8 @@ export function BrowsePage() {
 		},
 	})
 
+	const [tagsCollapsed, setTagsCollapsed] = useState(true)
+
 	return (
 		<Layout>
 			<div className={css.root}>
@@ -47,27 +49,29 @@ export function BrowsePage() {
 					{tagsContext.data ? (
 						<>
 							<div className={css.tagList}>
-								{tagsContext.data.items.slice(0, SIDEBAR_TAG_COUNT).map(tag => (
-									<Button
-										key={tag}
-										size={ButtonSize.SMALL}
-										look={tag === filterByTag ? ButtonLook.PRIMARY : ButtonLook.SECONDARY}
-										href={buildUrl({
-											path: generatePath(RoutePath.ROOT),
-											search: {
-												[FILTER_BY_TAG_PARAM]: tag,
-											},
-										})}
-									>
-										{tag}
-									</Button>
-								))}
+								{tagsContext.data.items
+									.slice(0, tagsCollapsed ? SIDEBAR_TAG_COUNT : tagsContext.data.items.length)
+									.map(tag => (
+										<Button
+											key={tag}
+											size={ButtonSize.SMALL}
+											look={tag === filterByTag ? ButtonLook.PRIMARY : ButtonLook.SECONDARY}
+											href={buildUrl({
+												path: generatePath(RoutePath.ROOT),
+												search: {
+													[FILTER_BY_TAG_PARAM]: tag,
+												},
+											})}
+										>
+											{tag}
+										</Button>
+									))}
 							</div>
 
-							{tagsContext.data.items.length > SIDEBAR_TAG_COUNT && (
-								<a className={css.sidebarMoreButton} href="/">
+							{tagsCollapsed && tagsContext.data.items.length > SIDEBAR_TAG_COUNT && (
+								<button className={css.sidebarMoreButton} onClick={() => setTagsCollapsed(false)}>
 									More ↓
-								</a>
+								</button>
 							)}
 						</>
 					) : (

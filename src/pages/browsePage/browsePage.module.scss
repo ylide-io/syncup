@@ -39,6 +39,7 @@
 }
 
 .sidebarMoreButton {
+	@include link-style;
 	@include expand-click-area;
 	font-size: 14px;
 }

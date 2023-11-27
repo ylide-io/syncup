@@ -79,14 +79,7 @@ button,
 }
 
 a {
-	color: var(--link-color);
-	text-decoration: none;
-	cursor: pointer; // cursor is 'text' for anchors with no [href]
-
-	&:hover,
-	&:focus-visible {
-		text-decoration: underline;
-	}
+	@include link-style;
 }
 
 b,

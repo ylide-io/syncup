@@ -58,6 +58,19 @@ $control-size_l: 52px;
 	}
 }
 
+//
+
+@mixin link-style {
+	color: var(--link-color);
+	text-decoration: none;
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: underline;
+	}
+}
+
 // UTILS
 
 @mixin expand-click-area($size: 4px, $pseudo: before) {
