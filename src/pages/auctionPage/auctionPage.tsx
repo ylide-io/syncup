@@ -207,7 +207,8 @@ export function AuctionPage() {
 							{slot.bids?.length ? (
 								<>
 									<div className={css.historyList}>
-										{slot.bids
+										{[...slot.bids]
+											.reverse()
 											.slice(0, isHistoryFolded ? FOLDED_HISTORY_SIZE : slot.bids.length)
 											.map((bid, i) => {
 												const order = bid.data
