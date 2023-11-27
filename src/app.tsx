@@ -14,6 +14,7 @@ import { Web3ModalManager } from './utils/walletconnect.tsx'
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
+			gcTime: 1000 * 10,
 			retry: false,
 			refetchOnWindowFocus: false,
 		},
