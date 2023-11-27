@@ -46,9 +46,9 @@ export function Layout({ children }: LayoutProps) {
 				{tagsContext.data ? (
 					<div className={css.footerTags}>
 						{tagsContext.data.items.map(tag => (
-							<a
+							<Link
 								key={tag}
-								href={buildUrl({
+								to={buildUrl({
 									path: generatePath(RoutePath.ROOT),
 									search: {
 										[FILTER_BY_TAG_PARAM]: tag,
@@ -56,7 +56,7 @@ export function Layout({ children }: LayoutProps) {
 								})}
 							>
 								{tag}
-							</a>
+							</Link>
 						))}
 					</div>
 				) : (
@@ -67,8 +67,8 @@ export function Layout({ children }: LayoutProps) {
 					<div>© 2023 SyncdUp, Inc.</div>
 
 					<div className={css.footerBottomRight}>
-						<a href="/">Terms of Service</a>
-						<a href="/">Privacy Policy</a>
+						<Link to={generatePath(RoutePath.ROOT)}>Terms of Service</Link>
+						<Link to={generatePath(RoutePath.ROOT)}>Privacy Policy</Link>
 					</div>
 				</div>
 			</div>
