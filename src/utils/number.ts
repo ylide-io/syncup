@@ -2,6 +2,14 @@ import { BigNumber, BigNumberish, utils } from 'ethers'
 
 const LOCALE = 'en-US'
 
+export function toBigNumber(value: BigNumberish | undefined | null) {
+	return value != null ? BigNumber.from(value) : undefined
+}
+
+export function cryptoAmount(value: string) {
+	return utils.parseUnits(value, 18)
+}
+
 export function formatCryptoAmount(value: BigNumberish) {
 	return utils.formatUnits(value, 18)
 }
@@ -20,18 +28,18 @@ export function compareBigNumbers(a: BigNumberish, b: BigNumberish) {
 	return BigNumber.from(a).gt(BigNumber.from(b)) ? 1 : BigNumber.from(a).lt(BigNumber.from(b)) ? -1 : 0
 }
 
-const oneBN: BigNumber = utils.parseUnits('1', 18)
+const oneBN: BigNumber = cryptoAmount('1')
 
 export function multiplyBigNumber(bn: BigNumberish, number: number): BigNumber {
 	const bnForSure = BigNumber.from(bn)
-	const numberBN = utils.parseUnits(number.toString(), 18)
+	const numberBN = cryptoAmount(number.toString())
 
 	return bnForSure.mul(numberBN).div(oneBN)
 }
 
 export function divideBigNumber(bn: BigNumberish, number: number): BigNumber {
 	const bnForSure = BigNumber.from(bn)
-	const numberBN = utils.parseUnits(number.toString(), 18)
+	const numberBN = cryptoAmount(number.toString())
 
 	return bnForSure.div(numberBN).div(oneBN)
 }

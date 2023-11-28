@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import clsx from 'clsx'
-import { BigNumber, utils } from 'ethers'
 import { OrderV2 } from 'opensea-js/lib/orders/types'
 import { useContext, useState } from 'react'
 import { generatePath, useParams } from 'react-router-dom'
@@ -18,7 +17,7 @@ import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
 import { DASH, ReactQueryKey } from '../../global.ts'
 import { FILTER_BY_TAG_PARAM, RoutePath } from '../../routePath.ts'
 import { invariant } from '../../utils/assert.ts'
-import { getCurrentPrice, getHighestBidPrice, placeBid } from '../../utils/auction.tsx'
+import { getCurrentPrice, getHighestBidPrice, getNextPrice, placeBid } from '../../utils/auction.tsx'
 import { DateFormatStyle, formatDate, formatDuration } from '../../utils/date.ts'
 import { formatCryptoAmount } from '../../utils/number.ts'
 import { cancelBid, getUserBids } from '../../utils/opensea.ts'
@@ -62,10 +61,7 @@ export function AuctionPage() {
 	const [isHistoryExpanded, setHistoryExpanded] = useState(true)
 	const isHistoryFolded = slot?.bids && slot.bids.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
 
-	const nextPrice =
-		(highestBidPrice && BigNumber.from(highestBidPrice).add(utils.parseUnits('0.0001', 18))) ||
-		currentPrice ||
-		utils.parseUnits('0.001', 18)
+	const nextPrice = getNextPrice(highestBidPrice || currentPrice)
 
 	const placeBidMutation = useMutation({
 		mutationFn: async () => {
