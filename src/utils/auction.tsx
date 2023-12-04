@@ -37,14 +37,10 @@ export function getHighestBidPrice(bids?: OrderV2[] | null) {
 	return toBigNumber(bids?.sort((a, b) => -compareBigNumbers(a.currentPrice, b.currentPrice))[0]?.currentPrice)
 }
 
-export function getCurrentPrice(ask: OrderV2, bids?: OrderV2[] | null) {
-	return getHighestBidPrice(bids) || toBigNumber(ask.currentPrice)
-}
-
 export function getNextPrice(lastPrice: BigNumber | undefined) {
 	lastPrice = lastPrice || BigNumber.from('0')
 
-	let nextPrice = ['0.01', '0.02', '0.05', '0.1'].map(cryptoAmount).find(value => lastPrice?.lt(value))
+	let nextPrice = ['0.001', '0.02', '0.05', '0.1'].map(cryptoAmount).find(value => lastPrice?.lt(value))
 	if (nextPrice) {
 		return nextPrice
 	}

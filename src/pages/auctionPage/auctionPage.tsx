@@ -17,7 +17,7 @@ import { ProfilePhoto } from '../../components/profilePhoto/profilePhoto.tsx'
 import { DASH, ReactQueryKey } from '../../global.ts'
 import { FILTER_BY_TAG_PARAM, RoutePath } from '../../routePath.ts'
 import { invariant } from '../../utils/assert.ts'
-import { getCurrentPrice, getHighestBidPrice, getNextPrice, placeBid } from '../../utils/auction.tsx'
+import { getHighestBidPrice, getNextPrice, placeBid } from '../../utils/auction.tsx'
 import { DateFormatStyle, formatDate, formatDuration } from '../../utils/date.ts'
 import { formatCryptoAmount } from '../../utils/number.ts'
 import { cancelBid, getUserBids } from '../../utils/opensea.ts'
@@ -45,23 +45,21 @@ export function AuctionPage() {
 
 			const bids = slot.bids?.map(b => b.data)
 			const highestBidPrice = getHighestBidPrice(bids)
-			const currentPrice = getCurrentPrice(slot.ask, bids)
 
 			console.log('slot', slot)
 			console.log('userBids', userBids)
-			console.log('currentPrice', currentPrice)
 
-			return { slot, userBids, highestBidPrice, currentPrice }
+			return { slot, userBids, highestBidPrice }
 		},
 		staleTime: 60 * 1000,
 	})
 
-	const { slot, userBids, highestBidPrice, currentPrice } = slotQuery.data || {}
+	const { slot, userBids, highestBidPrice } = slotQuery.data || {}
 
 	const [isHistoryExpanded, setHistoryExpanded] = useState(true)
 	const isHistoryFolded = slot?.bids && slot.bids.length > FOLDED_HISTORY_SIZE && !isHistoryExpanded
 
-	const nextPrice = getNextPrice(highestBidPrice || currentPrice)
+	const nextPrice = getNextPrice(highestBidPrice)
 
 	const placeBidMutation = useMutation({
 		mutationFn: async () => {
@@ -146,15 +144,17 @@ export function AuctionPage() {
 						<div className={css.bio}>{slot.expert.description}</div>
 
 						<div className={css.info}>
-							{currentPrice && (
-								<div>
-									<SectionHeader>Current Bid</SectionHeader>
-									<div className={css.infoValue}>{formatCryptoAmount(currentPrice)} ETH</div>
-									<div className={css.infoSubvalue}>
-										~{cryptoContext.getUsdPrice(currentPrice)} USD
-									</div>
+							<div>
+								<SectionHeader>Current Bid</SectionHeader>
+								<div className={css.infoValue}>
+									{highestBidPrice ? `${formatCryptoAmount(highestBidPrice)} ETH` : 'no bids yet'}
 								</div>
-							)}
+								{highestBidPrice && (
+									<div className={css.infoSubvalue}>
+										~{cryptoContext.getUsdPrice(highestBidPrice)} USD
+									</div>
+								)}
+							</div>
 
 							{slot.ask.finalized ? (
 								<div>
