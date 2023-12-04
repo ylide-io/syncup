@@ -82,6 +82,8 @@ export function DashboardPage() {
 					</div>
 				) : userQuery.isLoading ? (
 					<SpinningLoader />
+				) : !authToken ? (
+					<ErrorMessage>Connect your wallet to view the auctions you've participated in 👍</ErrorMessage>
 				) : (
 					<ErrorMessage>Failed to load data 😟</ErrorMessage>
 				)}
